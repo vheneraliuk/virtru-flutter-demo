@@ -11,10 +11,10 @@ class AuthCubit extends Cubit<AuthState> {
   final UserRepository userRepo;
 
   AuthCubit({required this.userRepo}) : super(const AuthState.unknown()) {
-    _readCurrentState();
+    reloadCurrentState();
   }
 
-  void _readCurrentState() async {
+  void reloadCurrentState() async {
     var currentUser = await userRepo.getUser();
     if (currentUser == null) {
       emit(const AuthState.unauthenticated());
