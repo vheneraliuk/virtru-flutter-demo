@@ -14,6 +14,10 @@ class LoginPage extends StatelessWidget {
       body: BlocConsumer<LoginCubit, LoginState>(
         listener: (context, state) {
           if (state.status == LoginStatus.authenticated) {
+            var snackBar = const SnackBar(
+              content: Text('Activation completed!'),
+            );
+            ScaffoldMessenger.of(context).showSnackBar(snackBar);
             BlocProvider.of<AuthCubit>(context).reloadCurrentState();
           }
           if (state.error != null) {

@@ -1,7 +1,6 @@
 import 'package:bloc/bloc.dart';
 import 'package:dio/dio.dart';
 import 'package:equatable/equatable.dart';
-import 'package:virtru_demo_flutter/api/api.dart';
 import 'package:virtru_demo_flutter/model/model.dart';
 import 'package:virtru_demo_flutter/repo/repo.dart';
 
@@ -9,14 +8,14 @@ part 'login_state.dart';
 
 class LoginCubit extends Cubit<LoginState> {
   final UserRepository userRepo;
-  final _accountClient = AccountsClient();
+  final AccountsRepository accountRepo;
 
-  LoginCubit({required this.userRepo}) : super(const LoginState.initial());
+  LoginCubit({required this.userRepo, required this.accountRepo})
+      : super(const LoginState.initial());
 
   void sendCode(String email) async {
     try {
-      var sessionId =
-          await _accountClient.requestCode(CodeRequest.forUser(userId: email));
+      var sessionId = await accountRepo.requestCode(userId: email);
       emit(LoginState.codePending(email, sessionId.sessionId));
     } on DioException catch (error) {
       _emitError(error);
@@ -27,10 +26,11 @@ class LoginCubit extends Cubit<LoginState> {
     var currentState = state;
     if (currentState.status != LoginStatus.pendingCode) return;
     try {
-      var appIdBundle = await _accountClient.sendCode(SendCodeRequest(
-          userId: currentState.userId!,
-          sessionId: currentState.sessionId!,
-          code: code));
+      var appIdBundle = await accountRepo.sendCode(
+        userId: currentState.userId!,
+        code: code,
+        sessionId: currentState.sessionId!,
+      );
       userRepo
           .saveUser(User(userId: appIdBundle.userId, appId: appIdBundle.appId));
       emit(LoginState.authenticated(appIdBundle));
@@ -43,8 +43,7 @@ class LoginCubit extends Cubit<LoginState> {
     var user = await userRepo.getUser();
     if (user == null) return;
     try {
-      _accountClient.revokeAppId('Virtru [["${user.appId}","${user.userId}"]]',
-          RevokeAppIdRequest.forAppId(user.appId));
+      accountRepo.revokeAppId(userId: user.appId, appId: user.userId);
       userRepo.removeCurrentUser();
       emit(const LoginState.initial());
     } on DioException catch (error) {

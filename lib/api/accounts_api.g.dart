@@ -3,103 +3,16 @@
 part of 'accounts_api.dart';
 
 // **************************************************************************
-// JsonSerializableGenerator
-// **************************************************************************
-
-RegisterRequest _$RegisterRequestFromJson(Map<String, dynamic> json) =>
-    RegisterRequest(
-      userId: json['userId'] as String,
-      platform: json['platform'] as String,
-      activationMethod: json['activationMethod'] as String,
-    );
-
-Map<String, dynamic> _$RegisterRequestToJson(RegisterRequest instance) =>
-    <String, dynamic>{
-      'userId': instance.userId,
-      'platform': instance.platform,
-      'activationMethod': instance.activationMethod,
-    };
-
-RevokeAppIdRequest _$RevokeAppIdRequestFromJson(Map<String, dynamic> json) =>
-    RevokeAppIdRequest(
-      appIds:
-          (json['appIds'] as List<dynamic>).map((e) => e as String).toList(),
-    );
-
-Map<String, dynamic> _$RevokeAppIdRequestToJson(RevokeAppIdRequest instance) =>
-    <String, dynamic>{
-      'appIds': instance.appIds,
-    };
-
-CodeRequest _$CodeRequestFromJson(Map<String, dynamic> json) => CodeRequest(
-      userId: json['userId'] as String,
-    );
-
-Map<String, dynamic> _$CodeRequestToJson(CodeRequest instance) =>
-    <String, dynamic>{
-      'userId': instance.userId,
-    };
-
-SendCodeRequest _$SendCodeRequestFromJson(Map<String, dynamic> json) =>
-    SendCodeRequest(
-      userId: json['userId'] as String,
-      code: json['code'] as String,
-      sessionId: json['sessionId'] as String,
-    );
-
-Map<String, dynamic> _$SendCodeRequestToJson(SendCodeRequest instance) =>
-    <String, dynamic>{
-      'userId': instance.userId,
-      'code': instance.code,
-      'sessionId': instance.sessionId,
-    };
-
-SessionId _$SessionIdFromJson(Map<String, dynamic> json) => SessionId(
-      sessionId: json['sessionId'] as String,
-    );
-
-Map<String, dynamic> _$SessionIdToJson(SessionId instance) => <String, dynamic>{
-      'sessionId': instance.sessionId,
-    };
-
-EmailLoginRequest _$EmailLoginRequestFromJson(Map<String, dynamic> json) =>
-    EmailLoginRequest(
-      emailAddress: json['emailAddress'] as String,
-      stayLoggedIn: json['stayLoggedIn'] as bool,
-    );
-
-Map<String, dynamic> _$EmailLoginRequestToJson(EmailLoginRequest instance) =>
-    <String, dynamic>{
-      'emailAddress': instance.emailAddress,
-      'stayLoggedIn': instance.stayLoggedIn,
-    };
-
-AppIdBundle _$AppIdBundleFromJson(Map<String, dynamic> json) => AppIdBundle(
-      userId: json['userId'] as String,
-      appId: json['appId'] as String,
-      state: json['state'] as String,
-      platform: json['platform'] as String,
-    );
-
-Map<String, dynamic> _$AppIdBundleToJson(AppIdBundle instance) =>
-    <String, dynamic>{
-      'userId': instance.userId,
-      'appId': instance.appId,
-      'state': instance.state,
-      'platform': instance.platform,
-    };
-
-// **************************************************************************
 // RetrofitGenerator
 // **************************************************************************
 
 // ignore_for_file: unnecessary_brace_in_string_interps,no_leading_underscores_for_local_identifiers
 
-class _AccountsClient implements AccountsClient {
-  _AccountsClient(
+class _AccountsClient extends AccountsClient {
+  _AccountsClient._(
     this._dio, {
     this.baseUrl,
-  }) {
+  }) : super._() {
     baseUrl ??= 'https://api.virtru.com/accounts';
   }
 
@@ -108,64 +21,7 @@ class _AccountsClient implements AccountsClient {
   String? baseUrl;
 
   @override
-  Future<AppIdBundle> register(RegisterRequest request) async {
-    const _extra = <String, dynamic>{};
-    final queryParameters = <String, dynamic>{};
-    final _headers = <String, dynamic>{};
-    final _data = <String, dynamic>{};
-    _data.addAll(request.toJson());
-    final _result = await _dio
-        .fetch<Map<String, dynamic>>(_setStreamType<AppIdBundle>(Options(
-      method: 'POST',
-      headers: _headers,
-      extra: _extra,
-    )
-            .compose(
-              _dio.options,
-              '/api/register',
-              queryParameters: queryParameters,
-              data: _data,
-            )
-            .copyWith(
-                baseUrl: _combineBaseUrls(
-              _dio.options.baseUrl,
-              baseUrl,
-            ))));
-    final value = AppIdBundle.fromJson(_result.data!);
-    return value;
-  }
-
-  @override
-  Future<void> revokeAppId(
-    String authHeader,
-    RevokeAppIdRequest request,
-  ) async {
-    const _extra = <String, dynamic>{};
-    final queryParameters = <String, dynamic>{};
-    final _headers = <String, dynamic>{r'Authorization': authHeader};
-    _headers.removeWhere((k, v) => v == null);
-    final _data = <String, dynamic>{};
-    _data.addAll(request.toJson());
-    await _dio.fetch<void>(_setStreamType<void>(Options(
-      method: 'POST',
-      headers: _headers,
-      extra: _extra,
-    )
-        .compose(
-          _dio.options,
-          '/api/appIdBundle/revoke',
-          queryParameters: queryParameters,
-          data: _data,
-        )
-        .copyWith(
-            baseUrl: _combineBaseUrls(
-          _dio.options.baseUrl,
-          baseUrl,
-        ))));
-  }
-
-  @override
-  Future<SessionId> requestCode(CodeRequest request) async {
+  Future<SessionId> _requestCode(CodeRequest request) async {
     const _extra = <String, dynamic>{};
     final queryParameters = <String, dynamic>{};
     final _headers = <String, dynamic>{r'Origin': 'https://sdk.virtru.com'};
@@ -194,7 +50,7 @@ class _AccountsClient implements AccountsClient {
   }
 
   @override
-  Future<AppIdBundle> sendCode(SendCodeRequest request) async {
+  Future<AppIdBundle> _sendCode(SendCodeRequest request) async {
     const _extra = <String, dynamic>{};
     final queryParameters = <String, dynamic>{};
     final _headers = <String, dynamic>{r'Origin': 'https://sdk.virtru.com'};
@@ -223,10 +79,14 @@ class _AccountsClient implements AccountsClient {
   }
 
   @override
-  Future<void> emailLogin(EmailLoginRequest request) async {
+  Future<void> _revokeAppId(
+    String authHeader,
+    RevokeAppIdRequest request,
+  ) async {
     const _extra = <String, dynamic>{};
     final queryParameters = <String, dynamic>{};
-    final _headers = <String, dynamic>{};
+    final _headers = <String, dynamic>{r'Authorization': authHeader};
+    _headers.removeWhere((k, v) => v == null);
     final _data = <String, dynamic>{};
     _data.addAll(request.toJson());
     await _dio.fetch<void>(_setStreamType<void>(Options(
@@ -236,7 +96,7 @@ class _AccountsClient implements AccountsClient {
     )
         .compose(
           _dio.options,
-          '/api/email-login',
+          '/api/appIdBundle/revoke',
           queryParameters: queryParameters,
           data: _data,
         )

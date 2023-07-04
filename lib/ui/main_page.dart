@@ -2,8 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:infinite_scroll_pagination/infinite_scroll_pagination.dart';
 import 'package:intl/intl.dart';
-import 'package:virtru_demo_flutter/api/api.dart';
 import 'package:virtru_demo_flutter/bloc/bloc.dart';
+import 'package:virtru_demo_flutter/model/model.dart';
 import 'package:virtru_demo_flutter/ui/ui.dart';
 
 class MainPage extends StatefulWidget {
