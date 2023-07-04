@@ -5,12 +5,14 @@ class LoginState extends Equatable {
   final AppIdBundle? appIdBundle;
   final String? userId;
   final String? sessionId;
+  final VirtruError? error;
 
   const LoginState._({
     this.status = LoginStatus.initial,
     this.appIdBundle,
     this.userId,
     this.sessionId,
+    this.error,
   });
 
   const LoginState.initial() : this._();
@@ -28,8 +30,23 @@ class LoginState extends Equatable {
           appIdBundle: appIdBundle,
         );
 
+  LoginState copyWith({
+    LoginStatus? status,
+    AppIdBundle? appIdBundle,
+    String? userId,
+    String? sessionId,
+    VirtruError? error,
+  }) =>
+      LoginState._(
+        status: status ?? this.status,
+        appIdBundle: appIdBundle ?? this.appIdBundle,
+        userId: userId ?? this.userId,
+        sessionId: sessionId ?? this.sessionId,
+        error: error ?? this.error,
+      );
+
   @override
-  List<Object?> get props => [status, appIdBundle, sessionId];
+  List<Object?> get props => [status, appIdBundle, sessionId, error];
 }
 
 enum LoginStatus { initial, pendingCode, authenticated }

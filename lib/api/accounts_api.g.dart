@@ -20,6 +20,17 @@ Map<String, dynamic> _$RegisterRequestToJson(RegisterRequest instance) =>
       'activationMethod': instance.activationMethod,
     };
 
+RevokeAppIdRequest _$RevokeAppIdRequestFromJson(Map<String, dynamic> json) =>
+    RevokeAppIdRequest(
+      appIds:
+          (json['appIds'] as List<dynamic>).map((e) => e as String).toList(),
+    );
+
+Map<String, dynamic> _$RevokeAppIdRequestToJson(RevokeAppIdRequest instance) =>
+    <String, dynamic>{
+      'appIds': instance.appIds,
+    };
+
 CodeRequest _$CodeRequestFromJson(Map<String, dynamic> json) => CodeRequest(
       userId: json['userId'] as String,
     );
@@ -122,6 +133,35 @@ class _AccountsClient implements AccountsClient {
             ))));
     final value = AppIdBundle.fromJson(_result.data!);
     return value;
+  }
+
+  @override
+  Future<void> revokeAppId(
+    String authHeader,
+    RevokeAppIdRequest request,
+  ) async {
+    const _extra = <String, dynamic>{};
+    final queryParameters = <String, dynamic>{};
+    final _headers = <String, dynamic>{r'Authorization': authHeader};
+    _headers.removeWhere((k, v) => v == null);
+    final _data = <String, dynamic>{};
+    _data.addAll(request.toJson());
+    await _dio.fetch<void>(_setStreamType<void>(Options(
+      method: 'POST',
+      headers: _headers,
+      extra: _extra,
+    )
+        .compose(
+          _dio.options,
+          '/api/appIdBundle/revoke',
+          queryParameters: queryParameters,
+          data: _data,
+        )
+        .copyWith(
+            baseUrl: _combineBaseUrls(
+          _dio.options.baseUrl,
+          baseUrl,
+        ))));
   }
 
   @override

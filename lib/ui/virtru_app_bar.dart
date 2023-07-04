@@ -5,7 +5,7 @@ import 'package:virtru_demo_flutter/bloc/bloc.dart';
 class VirtruAppBar extends StatelessWidget {
   final String title;
   final Widget body;
-  final Drawer? drawer;
+  final Widget? drawer;
 
   const VirtruAppBar(
       {super.key, required this.title, required this.body, this.drawer});

@@ -25,6 +25,12 @@ abstract class AccountsClient {
   @POST("/api/register")
   Future<AppIdBundle> register(@Body() RegisterRequest request);
 
+  @POST("/api/appIdBundle/revoke")
+  Future<void> revokeAppId(
+    @Header("Authorization") String authHeader,
+    @Body() RevokeAppIdRequest request,
+  );
+
   @POST("/api/code-login")
   @Headers({
     'Origin': 'https://sdk.virtru.com',
@@ -64,6 +70,22 @@ class RegisterRequest {
       _$RegisterRequestFromJson(json);
 
   Map<String, dynamic> toJson() => _$RegisterRequestToJson(this);
+}
+
+@JsonSerializable()
+class RevokeAppIdRequest {
+  final List<String> appIds;
+
+  RevokeAppIdRequest({
+    required this.appIds,
+  });
+
+  RevokeAppIdRequest.forAppId(String appId) : this(appIds: [appId]);
+
+  factory RevokeAppIdRequest.fromJson(Map<String, dynamic> json) =>
+      _$RevokeAppIdRequestFromJson(json);
+
+  Map<String, dynamic> toJson() => _$RevokeAppIdRequestToJson(this);
 }
 
 @JsonSerializable()

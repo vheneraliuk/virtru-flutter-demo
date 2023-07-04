@@ -12,9 +12,17 @@ class VirtruHomePage extends StatelessWidget {
   Widget build(BuildContext context) {
     return RepositoryProvider(
       create: (context) => UserRepository(),
-      child: BlocProvider<AuthCubit>(
-        create: (context) =>
-            AuthCubit(userRepo: RepositoryProvider.of(context)),
+      child: MultiBlocProvider(
+        providers: [
+          BlocProvider<AuthCubit>(
+            create: (context) =>
+                AuthCubit(userRepo: RepositoryProvider.of(context)),
+          ),
+          BlocProvider<LoginCubit>(
+            create: (context) =>
+                LoginCubit(userRepo: RepositoryProvider.of(context)),
+          ),
+        ],
         child: BlocBuilder<AuthCubit, AuthState>(
           builder: (context, state) {
             return switch (state) {
@@ -42,11 +50,7 @@ class VirtruHomePage extends StatelessWidget {
                     child: const MainPage(),
                   ),
                 ),
-              AuthStateUnauthenticated _ => BlocProvider(
-                  create: (context) =>
-                      LoginCubit(userRepo: RepositoryProvider.of(context)),
-                  child: const LoginPage(),
-                ),
+              AuthStateUnauthenticated _ => const LoginPage(),
               AuthStateUnknown _ => const VirtruAppBar(
                   title: 'Flutter Demo',
                   body: Center(

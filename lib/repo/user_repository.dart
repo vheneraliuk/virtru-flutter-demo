@@ -13,4 +13,9 @@ class UserRepository {
     var prefs = await SharedPreferences.getInstance();
     prefs.setStringList('creds', [user.userId, user.appId]);
   }
+
+  void removeCurrentUser() async {
+    var prefs = await SharedPreferences.getInstance();
+    prefs.remove('creds');
+  }
 }

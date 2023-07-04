@@ -64,6 +64,28 @@ class _MainPageState extends State<MainPage> {
     Navigator.of(context).pop();
   }
 
+  Future<void> _onLogOutTapped() async {
+    Navigator.of(context).pop();
+    return showDialog(
+      context: context,
+      builder: (context) => AlertDialog(
+        title: const Text('Logging out'),
+        content: const Text('Are you sure you want to log out?'),
+        actions: [
+          TextButton(
+              onPressed: () => Navigator.of(context).pop("No"),
+              child: const Text("No")),
+          TextButton(
+              onPressed: () {
+                BlocProvider.of<LoginCubit>(this.context).logOut();
+                Navigator.of(context).pop("Yes");
+              },
+              child: const Text("Yes"))
+        ],
+      ),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     var iconColor = Theme.of(context).colorScheme.primary;
@@ -115,64 +137,88 @@ class _MainPageState extends State<MainPage> {
             }
           },
         ),
+        BlocListener<LoginCubit, LoginState>(
+          listener: (context, state) {
+            if (state.status == LoginStatus.initial) {
+              BlocProvider.of<AuthCubit>(context).reloadCurrentState();
+            }
+          },
+        ),
       ],
       child: VirtruAppBar(
-        drawer: Drawer(
-          clipBehavior: Clip.none,
-          child: ListView(
-            children: [
-              BlocBuilder<AuthCubit, AuthState>(
-                builder: (context, state) {
-                  return UserAccountsDrawerHeader(
-                    decoration: BoxDecoration(
-                        color: Theme.of(context).colorScheme.inversePrimary),
-                    accountName: Text('Virtru Demo',
-                        style: Theme.of(context).textTheme.bodyLarge),
-                    accountEmail: Text(
-                      state is AuthStateAuthenticated
-                          ? state.user.userId
-                          : 'unknown',
-                      style: Theme.of(context).textTheme.bodyMedium,
-                    ),
-                    currentAccountPicture:
-                        Image.asset('assets/virtru_icon.png'),
-                    // currentAccountPictureSize: const Size.square(100.0),
-                  );
-                },
-              ),
-              ListTile(
-                  onTap: () => _onItemTapped(0),
-                  selected: _selectedIndex == 0,
+        drawer: SafeArea(
+          child: Drawer(
+            child: Column(
+              children: [
+                Expanded(
+                  child: ListView(
+                    children: [
+                      BlocBuilder<AuthCubit, AuthState>(
+                        builder: (context, state) {
+                          return UserAccountsDrawerHeader(
+                            decoration: BoxDecoration(
+                                color: Theme.of(context)
+                                    .colorScheme
+                                    .inversePrimary),
+                            accountName: Text('Virtru Demo',
+                                style: Theme.of(context).textTheme.bodyLarge),
+                            accountEmail: Text(
+                              state is AuthStateAuthenticated
+                                  ? state.user.userId
+                                  : 'unknown',
+                              style: Theme.of(context).textTheme.bodyMedium,
+                            ),
+                            currentAccountPicture:
+                                Image.asset('assets/virtru_icon.png'),
+                          );
+                        },
+                      ),
+                      ListTile(
+                          onTap: () => _onItemTapped(0),
+                          selected: _selectedIndex == 0,
+                          leading: Icon(
+                            Icons.outbox,
+                            color: iconColor,
+                          ),
+                          title: Text(_titles[0])),
+                      ListTile(
+                          onTap: () => _onItemTapped(1),
+                          selected: _selectedIndex == 1,
+                          leading: Icon(
+                            Icons.inbox,
+                            color: iconColor,
+                          ),
+                          title: Text(_titles[1])),
+                      ListTile(
+                          onTap: () => _onItemTapped(2),
+                          selected: _selectedIndex == 2,
+                          leading: Icon(
+                            Icons.drive_file_move_sharp,
+                            color: iconColor,
+                          ),
+                          title: Text(_titles[2])),
+                      ListTile(
+                          onTap: () => _onItemTapped(3),
+                          selected: _selectedIndex == 3,
+                          leading: Icon(
+                            Icons.drive_file_move_rtl_sharp,
+                            color: iconColor,
+                          ),
+                          title: Text(_titles[3])),
+                    ],
+                  ),
+                ),
+                const Spacer(),
+                ListTile(
+                  onTap: () => _onLogOutTapped(),
+                  title: const Text('Log out'),
                   leading: Icon(
-                    Icons.outbox,
+                    Icons.logout,
                     color: iconColor,
                   ),
-                  title: Text(_titles[0])),
-              ListTile(
-                  onTap: () => _onItemTapped(1),
-                  selected: _selectedIndex == 1,
-                  leading: Icon(
-                    Icons.inbox,
-                    color: iconColor,
-                  ),
-                  title: Text(_titles[1])),
-              ListTile(
-                  onTap: () => _onItemTapped(2),
-                  selected: _selectedIndex == 2,
-                  leading: Icon(
-                    Icons.drive_file_move_sharp,
-                    color: iconColor,
-                  ),
-                  title: Text(_titles[2])),
-              ListTile(
-                  onTap: () => _onItemTapped(3),
-                  selected: _selectedIndex == 3,
-                  leading: Icon(
-                    Icons.drive_file_move_rtl_sharp,
-                    color: iconColor,
-                  ),
-                  title: Text(_titles[3])),
-            ],
+                ),
+              ],
+            ),
           ),
         ),
         title: _titles[_selectedIndex],

@@ -16,6 +16,16 @@ class LoginPage extends StatelessWidget {
           if (state.status == LoginStatus.authenticated) {
             BlocProvider.of<AuthCubit>(context).reloadCurrentState();
           }
+          if (state.error != null) {
+            var snackBar = SnackBar(
+              backgroundColor: Theme.of(context).colorScheme.error,
+              content: Text(
+                state.error?.message ?? 'Unknown error',
+              ),
+            );
+
+            ScaffoldMessenger.of(context).showSnackBar(snackBar);
+          }
         },
         builder: (context, state) {
           if (state.status == LoginStatus.initial) {
@@ -55,6 +65,8 @@ class _EmailFormState extends State<EmailForm> {
           Padding(
             padding: const EdgeInsets.all(8.0),
             child: TextFormField(
+              onFieldSubmitted: (value) => validateAndRequestCode(),
+              textInputAction: TextInputAction.send,
               controller: emailTextController,
               autofocus: true,
               validator: (value) {
@@ -76,17 +88,17 @@ class _EmailFormState extends State<EmailForm> {
             ),
           ),
           OutlinedButton(
-              onPressed: () => {
-                    if (_emailFormKey.currentState!.validate())
-                      {
-                        BlocProvider.of<LoginCubit>(context)
-                            .sendCode(emailTextController.text)
-                      }
-                  },
+              onPressed: () => validateAndRequestCode(),
               child: const Text("Send Code")),
         ],
       ),
     );
+  }
+
+  void validateAndRequestCode() {
+    if (_emailFormKey.currentState!.validate()) {
+      BlocProvider.of<LoginCubit>(context).sendCode(emailTextController.text);
+    }
   }
 }
 
@@ -116,6 +128,8 @@ class _CodeFormState extends State<CodeForm> {
           Padding(
             padding: const EdgeInsets.all(8.0),
             child: TextFormField(
+              onFieldSubmitted: (value) => validateAndSendCode(),
+              textInputAction: TextInputAction.done,
               maxLength: 7,
               inputFormatters: <TextInputFormatter>[
                 FilteringTextInputFormatter.digitsOnly
@@ -139,17 +153,30 @@ class _CodeFormState extends State<CodeForm> {
               ),
             ),
           ),
-          OutlinedButton(
-              onPressed: () => {
-                    if (_codeFormKey.currentState!.validate())
-                      {
-                        BlocProvider.of<LoginCubit>(context)
-                            .activate(codeTextController.text)
-                      }
-                  },
-              child: const Text("Activate")),
+          Row(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              Padding(
+                padding: const EdgeInsets.only(right: 24.0),
+                child: OutlinedButton.icon(
+                    onPressed: () =>
+                        BlocProvider.of<LoginCubit>(context).backToSendCode(),
+                    icon: const Icon(Icons.arrow_back),
+                    label: const Text("Back")),
+              ),
+              OutlinedButton(
+                  onPressed: () => validateAndSendCode(),
+                  child: const Text("Activate")),
+            ],
+          ),
         ],
       ),
     );
+  }
+
+  void validateAndSendCode() {
+    if (_codeFormKey.currentState!.validate()) {
+      BlocProvider.of<LoginCubit>(context).activate(codeTextController.text);
+    }
   }
 }
