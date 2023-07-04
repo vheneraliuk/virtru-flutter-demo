@@ -5,10 +5,10 @@
 // 'flutter create' template.
 
 // The application's name. By default this is also the title of the Flutter window.
-PRODUCT_NAME = virtru_demo_flutter
+PRODUCT_NAME = Virtru Flutter (Demo)
 
 // The application's bundle identifier
-PRODUCT_BUNDLE_IDENTIFIER = com.virtru.virtruDemoFlutter
+PRODUCT_BUNDLE_IDENTIFIER = com.virtru.flutter.demo
 
 // The copyright displayed in application information
 PRODUCT_COPYRIGHT = Copyright © 2023 com.virtru. All rights reserved.

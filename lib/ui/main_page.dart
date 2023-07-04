@@ -302,7 +302,7 @@ class SentFiles extends StatelessWidget {
         builderDelegate: PagedChildBuilderDelegate<Policy>(
             itemBuilder: (context, item, index) => ListTile(
                   leading: Icon(
-                    Icons.file_present_sharp,
+                    Icons.file_present_rounded,
                     color: Theme.of(context).colorScheme.primary,
                   ),
                   title: Text(
@@ -332,7 +332,7 @@ class ReceivedFiles extends StatelessWidget {
         builderDelegate: PagedChildBuilderDelegate<Policy>(
             itemBuilder: (context, item, index) => ListTile(
                   leading: Icon(
-                    Icons.file_present_sharp,
+                    Icons.file_present_rounded,
                     color: Theme.of(context).colorScheme.primary,
                   ),
                   title: Text(

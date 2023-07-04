@@ -1,4 +1,4 @@
-package com.virtru.virtru_demo_flutter
+package com.virtru.flutter.demo
 
 import io.flutter.embedding.android.FlutterActivity
 
