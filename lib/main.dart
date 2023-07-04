@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:virtru_demo_flutter/bloc/dark_mode_cubit.dart';
-import 'package:virtru_demo_flutter/repo/dark_mode_repository.dart';
-import 'package:virtru_demo_flutter/ui/virtru_home_page.dart';
+import 'package:virtru_demo_flutter/bloc/bloc.dart';
+import 'package:virtru_demo_flutter/repo/repo.dart';
+import 'package:virtru_demo_flutter/ui/ui.dart';
 
 void main() {
   runApp(const MyApp());

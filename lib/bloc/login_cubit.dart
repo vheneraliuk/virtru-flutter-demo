@@ -1,24 +1,14 @@
 import 'package:bloc/bloc.dart';
-import 'package:dio/dio.dart';
 import 'package:equatable/equatable.dart';
-import 'package:meta/meta.dart';
-import 'package:pretty_dio_logger/pretty_dio_logger.dart';
-import 'package:virtru_demo_flutter/model/user.dart';
-import 'package:virtru_demo_flutter/repo/user_repository.dart';
-
-import '../api/accounts_api.dart';
+import 'package:virtru_demo_flutter/api/api.dart';
+import 'package:virtru_demo_flutter/model/model.dart';
+import 'package:virtru_demo_flutter/repo/repo.dart';
 
 part 'login_state.dart';
 
 class LoginCubit extends Cubit<LoginState> {
   final UserRepository userRepo;
-  final _accountClient = AccountsClient(Dio()
-    ..interceptors.add(PrettyDioLogger(
-      requestHeader: true,
-      requestBody: true,
-      responseHeader: true,
-      responseBody: true,
-    )));
+  final _accountClient = AccountsClient();
 
   LoginCubit({required this.userRepo}) : super(const LoginState.initial());
 

@@ -1,7 +1,6 @@
 import 'package:bloc/bloc.dart';
 import 'package:equatable/equatable.dart';
-import 'package:meta/meta.dart';
-import 'package:virtru_demo_flutter/repo/dark_mode_repository.dart';
+import 'package:virtru_demo_flutter/repo/repo.dart';
 
 part 'dark_mode_state.dart';
 

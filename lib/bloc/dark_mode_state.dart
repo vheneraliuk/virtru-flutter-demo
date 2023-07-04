@@ -1,6 +1,5 @@
 part of 'dark_mode_cubit.dart';
 
-@immutable
 class DarkModeState extends Equatable {
   const DarkModeState.fromBool({required this.darkMode});
 

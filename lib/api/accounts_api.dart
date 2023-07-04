@@ -2,13 +2,25 @@ import 'dart:io';
 
 import 'package:dio/dio.dart' hide Headers;
 import 'package:json_annotation/json_annotation.dart';
+import 'package:pretty_dio_logger/pretty_dio_logger.dart';
 import 'package:retrofit/retrofit.dart';
 
 part 'accounts_api.g.dart';
 
 @RestApi(baseUrl: "https://api.virtru.com/accounts")
 abstract class AccountsClient {
-  factory AccountsClient(Dio dio, {String baseUrl}) = _AccountsClient;
+  factory AccountsClient({String? baseUrl}) {
+    var dio = Dio()
+      ..interceptors.addAll([
+        PrettyDioLogger(
+          requestHeader: true,
+          requestBody: true,
+          responseHeader: true,
+          responseBody: true,
+        ),
+      ]);
+    return _AccountsClient(dio, baseUrl: baseUrl);
+  }
 
   @POST("/api/register")
   Future<AppIdBundle> register(@Body() RegisterRequest request);

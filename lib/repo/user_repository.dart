@@ -1,6 +1,5 @@
 import 'package:shared_preferences/shared_preferences.dart';
-
-import '../model/user.dart';
+import 'package:virtru_demo_flutter/model/model.dart';
 
 class UserRepository {
   Future<User?> getUser() async {

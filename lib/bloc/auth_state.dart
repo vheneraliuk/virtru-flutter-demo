@@ -1,25 +1,13 @@
 part of 'auth_cubit.dart';
 
-@immutable
-class AuthState extends Equatable {
-  const AuthState._({
-    this.status = AuthenticationStatus.unknown,
-    this.user = User.empty,
-  });
+sealed class AuthState {}
 
-  const AuthState.unknown() : this._();
+class AuthStateUnknown extends AuthState {}
 
-  const AuthState.authenticated(User user)
-      : this._(status: AuthenticationStatus.authenticated, user: user);
+class AuthStateUnauthenticated extends AuthState {}
 
-  const AuthState.unauthenticated()
-      : this._(status: AuthenticationStatus.unauthenticated);
-
-  final AuthenticationStatus status;
+class AuthStateAuthenticated extends AuthState {
   final User user;
 
-  @override
-  List<Object> get props => [status, user];
+  AuthStateAuthenticated({required this.user});
 }
-
-enum AuthenticationStatus { unknown, authenticated, unauthenticated }
