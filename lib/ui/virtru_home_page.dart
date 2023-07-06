@@ -1,14 +1,38 @@
+import 'package:app_links/app_links.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:virtru_demo_flutter/bloc/bloc.dart';
+import 'package:virtru_demo_flutter/model/model.dart';
 import 'package:virtru_demo_flutter/repo/repo.dart';
 import 'package:virtru_demo_flutter/ui/ui.dart';
 
 class VirtruHomePage extends StatelessWidget {
-  const VirtruHomePage({super.key});
+  VirtruHomePage({super.key});
+
+  final _appLinks = AppLinks();
 
   @override
   Widget build(BuildContext context) {
+    _appLinks.uriLinkStream.listen((uri) {
+      var link = SecureReaderLink.fromUri(uri);
+      if (link == null) return;
+      debugPrint('Received URI: $uri');
+      debugPrint('MetaData Version: ${link.version}');
+      debugPrint('MetaData Url: ${link.metadataUrl}');
+      debugPrint('MetaData Key: ${link.metadataKey}');
+      debugPrint('MetaData Iv: ${link.metadataIv}');
+      debugPrint('Attachment Tdo Id: ${link.attachmentTdoId}');
+      debugPrint('Sender: ${link.sender}');
+      debugPrint('Policy Uuid: ${link.policyUuid}');
+      debugPrint('Campaign Id: ${link.campaignId}');
+      debugPrint('Template Id: ${link.templateId}');
+
+      EmailPage.go(
+        context,
+        policyId: link.getPolicyId(),
+        metaDataKey: link.metadataKey,
+      );
+    });
     return MultiRepositoryProvider(
       providers: [
         RepositoryProvider(
@@ -36,7 +60,8 @@ class VirtruHomePage extends StatelessWidget {
           builder: (context, state) {
             return switch (state) {
               AuthStateAuthenticated _ => RepositoryProvider(
-                  create: (context) => AcmRepository.forUser(state.user),
+                  create: (context) =>
+                      AcmRepository(userRepo: RepositoryProvider.of(context)),
                   child: MultiBlocProvider(
                     providers: [
                       BlocProvider(

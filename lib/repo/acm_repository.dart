@@ -1,29 +1,46 @@
 import 'package:virtru_demo_flutter/api/api.dart';
 import 'package:virtru_demo_flutter/model/model.dart';
+import 'package:virtru_demo_flutter/repo/repo.dart';
 
 class AcmRepository {
-  final AcmClient acmClient;
+  final AcmClient _acmClient;
 
-  AcmRepository._(this.acmClient);
+  AcmRepository._(this._acmClient);
 
-  factory AcmRepository.forUser(User user) {
-    var acmClient = AcmClient.forUser(user);
+  factory AcmRepository({required UserRepository userRepo}) {
+    var acmClient = AcmClient(userRepo);
     return AcmRepository._(acmClient);
   }
 
   Future<PoliciesSearchResponse> getSentEmails({int bookmark = 0}) {
-    return acmClient.getSentEmails(bookmark: bookmark);
+    return _acmClient.getSentEmails(bookmark: bookmark);
   }
 
   Future<PoliciesSearchResponse> getReceivedEmails({int bookmark = 0}) {
-    return acmClient.getReceivedEmails(bookmark: bookmark);
+    return _acmClient.getReceivedEmails(bookmark: bookmark);
   }
 
   Future<PoliciesSearchResponse> getSentFiles({int bookmark = 0}) {
-    return acmClient.getSentFiles(bookmark: bookmark);
+    return _acmClient.getSentFiles(bookmark: bookmark);
   }
 
   Future<PoliciesSearchResponse> getReceivedFiles({int bookmark = 0}) {
-    return acmClient.getReceivedFiles(bookmark: bookmark);
+    return _acmClient.getReceivedFiles(bookmark: bookmark);
+  }
+
+  Future<Contract> getContract({required String policyId}) {
+    return _acmClient.getContract(policyId);
+  }
+
+  Future<ExtendedPolicy> getPolicy({required String policyId}) {
+    return _acmClient.getPolicy(policyId);
+  }
+
+  Future<List<int>> getPayload({required String policyId}) {
+    return _acmClient.getPayload(policyId);
+  }
+
+  Future<List<int>> getMetadata({required String policyId}) {
+    return _acmClient.getMetadata(policyId);
   }
 }

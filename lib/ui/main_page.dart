@@ -3,6 +3,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:infinite_scroll_pagination/infinite_scroll_pagination.dart';
 import 'package:intl/intl.dart';
 import 'package:virtru_demo_flutter/bloc/bloc.dart';
+import 'package:virtru_demo_flutter/helpers/helpers.dart';
 import 'package:virtru_demo_flutter/model/model.dart';
 import 'package:virtru_demo_flutter/ui/ui.dart';
 
@@ -100,7 +101,7 @@ class _MainPageState extends State<MainPage> {
         BlocListener<SentEmailsCubit, SentEmailsState>(
           listener: (context, state) {
             if (state.error != null) {
-              _sentEmailsPagingController.error = state.error;
+              _sentEmailsPagingController.error = state.error!.message;
             } else if (state.policies != null) {
               _sentEmailsPagingController.appendPage(
                   state.policies!, state.bookmark);
@@ -110,7 +111,7 @@ class _MainPageState extends State<MainPage> {
         BlocListener<ReceivedEmailsCubit, ReceivedEmailsState>(
           listener: (context, state) {
             if (state.error != null) {
-              _receivedEmailsPagingController.error = state.error;
+              _receivedEmailsPagingController.error = state.error!.message;
             } else if (state.policies != null) {
               _receivedEmailsPagingController.appendPage(
                   state.policies!, state.bookmark);
@@ -120,7 +121,7 @@ class _MainPageState extends State<MainPage> {
         BlocListener<SentFilesCubit, SentFilesState>(
           listener: (context, state) {
             if (state.error != null) {
-              _sentFilesPagingController.error = state.error;
+              _sentFilesPagingController.error = state.error!.message;
             } else if (state.policies != null) {
               _sentFilesPagingController.appendPage(
                   state.policies!, state.bookmark);
@@ -130,7 +131,7 @@ class _MainPageState extends State<MainPage> {
         BlocListener<ReceivedFilesCubit, ReceivedFilesState>(
           listener: (context, state) {
             if (state.error != null) {
-              _receivedFilesPagingController.error = state.error;
+              _receivedFilesPagingController.error = state.error!.message;
             } else if (state.policies != null) {
               _receivedFilesPagingController.appendPage(
                   state.policies!, state.bookmark);
@@ -241,6 +242,7 @@ class SentEmails extends StatelessWidget {
         pagingController: pagingController,
         builderDelegate: PagedChildBuilderDelegate<Policy>(
             itemBuilder: (context, item, index) => ListTile(
+                  // onTap: () => EmailPage.goHere(context, policyId: item.id),
                   leading: Icon(
                     Icons.mail_lock,
                     color: Theme.of(context).colorScheme.primary,
@@ -251,7 +253,7 @@ class SentEmails extends StatelessWidget {
                     overflow: TextOverflow.ellipsis,
                   ),
                   subtitle: Text(_getRecipientsText(item.to)),
-                  trailing: Text(_getDateTimeString(item.dateSent)),
+                  trailing: Text(getDateString(item.dateSent)),
                 )),
       ),
     );
@@ -271,6 +273,7 @@ class ReceivedEmails extends StatelessWidget {
         pagingController: pagingController,
         builderDelegate: PagedChildBuilderDelegate<Policy>(
             itemBuilder: (context, item, index) => ListTile(
+                  // onTap: () => EmailPage.goHere(context, policyId: item.id),
                   leading: Icon(
                     Icons.mail_lock,
                     color: Theme.of(context).colorScheme.primary,
@@ -281,7 +284,7 @@ class ReceivedEmails extends StatelessWidget {
                     overflow: TextOverflow.ellipsis,
                   ),
                   subtitle: Text(item.from),
-                  trailing: Text(_getDateTimeString(item.dateSent)),
+                  trailing: Text(getDateString(item.dateSent)),
                 )),
       ),
     );
@@ -311,7 +314,7 @@ class SentFiles extends StatelessWidget {
                     overflow: TextOverflow.ellipsis,
                   ),
                   subtitle: Text(_getRecipientsText(item.to)),
-                  trailing: Text(_getDateTimeString(item.dateSent)),
+                  trailing: Text(getDateString(item.dateSent)),
                 )),
       ),
     );
@@ -341,23 +344,11 @@ class ReceivedFiles extends StatelessWidget {
                     overflow: TextOverflow.ellipsis,
                   ),
                   subtitle: Text(item.from),
-                  trailing: Text(_getDateTimeString(item.dateSent)),
+                  trailing: Text(getDateString(item.dateSent)),
                 )),
       ),
     );
   }
-}
-
-String _getDateTimeString(DateTime dateSent) {
-  final now = DateTime.now().toUtc();
-  final today = DateTime(now.year, now.month, now.day);
-  final daySent = DateTime(dateSent.year, dateSent.month, dateSent.day);
-  if (daySent == today) {
-    return DateFormat.jm().format(dateSent.toLocal());
-  } else if (daySent.year == today.year) {
-    return DateFormat.MMMd().format(dateSent.toLocal());
-  }
-  return DateFormat.yMMMd().format(dateSent.toLocal());
 }
 
 String _getRecipientsText(List<String> to) {

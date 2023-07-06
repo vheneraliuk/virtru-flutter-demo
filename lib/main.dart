@@ -24,15 +24,22 @@ class MyApp extends StatelessWidget {
             return MaterialApp(
               debugShowCheckedModeBanner: false,
               title: 'Virtru Demo',
-              theme: ThemeData(
+              themeMode: state.darkMode ? ThemeMode.dark : ThemeMode.light,
+              darkTheme: ThemeData.from(
                 colorScheme: ColorScheme.fromSeed(
-                    seedColor: Colors.blue,
-                    brightness:
-                        state.darkMode ? Brightness.dark : Brightness.light),
+                  seedColor: Colors.blue,
+                  brightness: Brightness.dark,
+                ),
+                useMaterial3: true,
+              ),
+              theme: ThemeData.from(
+                colorScheme: ColorScheme.fromSeed(
+                  seedColor: Colors.blue,
+                ),
                 useMaterial3: true,
               ),
               // home: const LoginPage(),
-              home: const VirtruHomePage(),
+              home: VirtruHomePage(),
             );
           },
         ),

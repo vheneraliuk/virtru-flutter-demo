@@ -149,6 +149,77 @@ String getPlatform() {
 }
 
 @JsonSerializable()
+class Contract {
+  final String policyId;
+  final String authorizedUser;
+  final String key;
+  final KeyAccess keyAccess;
+  final String type;
+  final String displayName;
+  final String state;
+  final DateTime? activeEnd;
+  final List<String> authorizations;
+  final bool isManaged;
+  final bool isOwner;
+  final bool isRecipient;
+  final String sentFrom;
+  final bool isInternal;
+  final List<String> attributes;
+  final int leaseTime;
+
+  Contract(
+      this.policyId,
+      this.authorizedUser,
+      this.key,
+      this.keyAccess,
+      this.type,
+      this.displayName,
+      this.state,
+      this.activeEnd,
+      this.authorizations,
+      this.isManaged,
+      this.isOwner,
+      this.isRecipient,
+      this.sentFrom,
+      this.isInternal,
+      this.attributes,
+      this.leaseTime);
+
+  factory Contract.fromJson(Map<String, dynamic> json) =>
+      _$ContractFromJson(json);
+
+  Map<String, dynamic> toJson() => _$ContractToJson(this);
+}
+
+@JsonSerializable()
+class KeyAccess {
+  final String type;
+  final String version;
+  final String keyId;
+  final KeyDetails details;
+
+  KeyAccess(this.type, this.version, this.keyId, this.details);
+
+  factory KeyAccess.fromJson(Map<String, dynamic> json) =>
+      _$KeyAccessFromJson(json);
+
+  Map<String, dynamic> toJson() => _$KeyAccessToJson(this);
+}
+
+@JsonSerializable()
+class KeyDetails {
+  final String encoding;
+  final String body;
+
+  KeyDetails(this.encoding, this.body);
+
+  factory KeyDetails.fromJson(Map<String, dynamic> json) =>
+      _$KeyDetailsFromJson(json);
+
+  Map<String, dynamic> toJson() => _$KeyDetailsToJson(this);
+}
+
+@JsonSerializable()
 class PoliciesSearchResponse {
   @JsonKey(name: 'total_rows')
   final int totalRows;
@@ -234,4 +305,54 @@ class Policy {
   factory Policy.fromJson(Map<String, dynamic> json) => _$PolicyFromJson(json);
 
   Map<String, dynamic> toJson() => _$PolicyToJson(this);
+}
+
+@JsonSerializable()
+class ExtendedPolicy {
+  final String uuid;
+  final String orgId;
+  final String sentFrom;
+  final List<String> associatedAttachmentIds;
+  final List<String> children;
+  final DateTime created;
+  final String? displayName;
+  final DateTime lastModified;
+  final DateTime secureEmailSentAt;
+  final SimplePolicy simplePolicy;
+
+  ExtendedPolicy(
+    this.uuid,
+    this.orgId,
+    this.sentFrom,
+    this.associatedAttachmentIds,
+    this.children,
+    this.created,
+    this.displayName,
+    this.lastModified,
+    this.secureEmailSentAt,
+    this.simplePolicy,
+  );
+
+  factory ExtendedPolicy.fromJson(Map<String, dynamic> json) =>
+      _$ExtendedPolicyFromJson(json);
+
+  Map<String, dynamic> toJson() => _$ExtendedPolicyToJson(this);
+}
+
+@JsonSerializable()
+class SimplePolicy {
+  final List<String> emailUsers;
+  final List<String> authorizations;
+  final String state;
+  final bool isManaged;
+  final DateTime? activeEnd;
+  final List<String> accessedBy;
+
+  SimplePolicy(this.emailUsers, this.authorizations, this.state, this.isManaged,
+      this.activeEnd, this.accessedBy);
+
+  factory SimplePolicy.fromJson(Map<String, dynamic> json) =>
+      _$SimplePolicyFromJson(json);
+
+  Map<String, dynamic> toJson() => _$SimplePolicyToJson(this);
 }

@@ -3,7 +3,7 @@ part of 'sent_emails_cubit.dart';
 class SentEmailsState extends Equatable {
   final List<Policy>? policies;
   final int? bookmark;
-  final dynamic error;
+  final VirtruError? error;
 
   const SentEmailsState._({
     this.policies,

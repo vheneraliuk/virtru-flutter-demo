@@ -11,9 +11,9 @@ part of 'acm_api.dart';
 class _AcmClient extends AcmClient {
   _AcmClient._(
     this._dio,
-    User user, {
+    UserRepository userRepo, {
     this.baseUrl,
-  }) : super._(user) {
+  }) : super._(userRepo) {
     baseUrl ??= 'https://api.virtru.com/acm';
   }
 
@@ -53,6 +53,116 @@ class _AcmClient extends AcmClient {
               baseUrl,
             ))));
     final value = PoliciesSearchResponse.fromJson(_result.data!);
+    return value;
+  }
+
+  @override
+  Future<Contract> getContract(String policyId) async {
+    const _extra = <String, dynamic>{};
+    final queryParameters = <String, dynamic>{};
+    final _headers = <String, dynamic>{};
+    final Map<String, dynamic>? _data = null;
+    final _result =
+        await _dio.fetch<Map<String, dynamic>>(_setStreamType<Contract>(Options(
+      method: 'GET',
+      headers: _headers,
+      extra: _extra,
+    )
+            .compose(
+              _dio.options,
+              '/api/policies/${policyId}/contract',
+              queryParameters: queryParameters,
+              data: _data,
+            )
+            .copyWith(
+                baseUrl: _combineBaseUrls(
+              _dio.options.baseUrl,
+              baseUrl,
+            ))));
+    final value = Contract.fromJson(_result.data!);
+    return value;
+  }
+
+  @override
+  Future<ExtendedPolicy> getPolicy(String policyId) async {
+    const _extra = <String, dynamic>{};
+    final queryParameters = <String, dynamic>{};
+    final _headers = <String, dynamic>{};
+    final Map<String, dynamic>? _data = null;
+    final _result = await _dio
+        .fetch<Map<String, dynamic>>(_setStreamType<ExtendedPolicy>(Options(
+      method: 'GET',
+      headers: _headers,
+      extra: _extra,
+    )
+            .compose(
+              _dio.options,
+              '/api/policies/${policyId}',
+              queryParameters: queryParameters,
+              data: _data,
+            )
+            .copyWith(
+                baseUrl: _combineBaseUrls(
+              _dio.options.baseUrl,
+              baseUrl,
+            ))));
+    final value = ExtendedPolicy.fromJson(_result.data!);
+    return value;
+  }
+
+  @override
+  Future<List<int>> getPayload(String policyId) async {
+    const _extra = <String, dynamic>{};
+    final queryParameters = <String, dynamic>{};
+    final _headers = <String, dynamic>{};
+    final Map<String, dynamic>? _data = null;
+    final _result =
+        await _dio.fetch<List<dynamic>>(_setStreamType<List<int>>(Options(
+      method: 'GET',
+      headers: _headers,
+      extra: _extra,
+      responseType: ResponseType.bytes,
+    )
+            .compose(
+              _dio.options,
+              '/api/policies/${policyId}/data/payload',
+              queryParameters: queryParameters,
+              data: _data,
+            )
+            .copyWith(
+                baseUrl: _combineBaseUrls(
+              _dio.options.baseUrl,
+              baseUrl,
+            ))));
+    final value = _result.data!.cast<int>();
+    return value;
+  }
+
+  @override
+  Future<List<int>> getMetadata(String policyId) async {
+    const _extra = <String, dynamic>{};
+    final queryParameters = <String, dynamic>{};
+    final _headers = <String, dynamic>{};
+    final Map<String, dynamic>? _data = null;
+    final _result =
+        await _dio.fetch<List<dynamic>>(_setStreamType<List<int>>(Options(
+      method: 'GET',
+      headers: _headers,
+      extra: _extra,
+      responseType: ResponseType.bytes,
+    )
+            .compose(
+              _dio.options,
+              '/api/policies/${policyId}/data/metadata',
+              queryParameters: queryParameters,
+              data: _data,
+            )
+            .copyWith(
+                baseUrl: _combineBaseUrls(
+              _dio.options.baseUrl,
+              baseUrl,
+            ))));
+    final value = _result.data!.cast<int>();
     return value;
   }
 

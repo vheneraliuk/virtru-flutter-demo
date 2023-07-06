@@ -19,7 +19,11 @@ class SentEmailsCubit extends Cubit<SentEmailsState> {
         result.bookmark,
       ));
     } catch (error) {
-      emit(SentEmailsState.error(state.policies, state.bookmark, error));
+      emit(SentEmailsState.error(
+        state.policies,
+        state.bookmark,
+        VirtruError.fromError(error),
+      ));
     }
   }
 }

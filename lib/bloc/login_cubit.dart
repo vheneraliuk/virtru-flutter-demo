@@ -31,8 +31,10 @@ class LoginCubit extends Cubit<LoginState> {
         code: code,
         sessionId: currentState.sessionId!,
       );
-      userRepo
-          .saveUser(User(userId: appIdBundle.userId, appId: appIdBundle.appId));
+      userRepo.saveUser(User(
+        userId: appIdBundle.userId,
+        appId: appIdBundle.appId,
+      ));
       emit(LoginState.authenticated(appIdBundle));
     } on DioException catch (error) {
       _emitError(error);

@@ -1,3 +1,4 @@
+import 'package:dio/dio.dart';
 import 'package:json_annotation/json_annotation.dart';
 
 part 'virtru_error.g.dart';
@@ -30,4 +31,19 @@ class VirtruError {
       _$VirtruErrorFromJson(json);
 
   Map<String, dynamic> toJson() => _$VirtruErrorToJson(this);
+
+  factory VirtruError.fromError(Object error) {
+    if (error is DioException) {
+      var data = error.response?.data;
+      if (data != null) {
+        var virtruError = VirtruErrorResponse.fromJson(data);
+        return virtruError.error;
+      }
+      return VirtruError(
+        name: error.type.name,
+        message: error.response?.statusMessage ?? 'Unknown error',
+      );
+    }
+    return VirtruError(name: "Unknown", message: 'Unknown error');
+  }
 }

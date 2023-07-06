@@ -1,4 +1,5 @@
 import 'package:dio/dio.dart' hide Headers;
+import 'package:flutter/foundation.dart';
 import 'package:pretty_dio_logger/pretty_dio_logger.dart';
 import 'package:retrofit/retrofit.dart';
 import 'package:virtru_demo_flutter/model/model.dart';
@@ -10,15 +11,7 @@ abstract class AccountsClient {
   AccountsClient._();
 
   factory AccountsClient({String? baseUrl}) {
-    var dio = Dio()
-      ..interceptors.addAll([
-        PrettyDioLogger(
-          requestHeader: true,
-          requestBody: true,
-          responseHeader: true,
-          responseBody: true,
-        ),
-      ]);
+    var dio = Dio()..interceptors.addAll(_getInterceptors());
     return _AccountsClient._(dio, baseUrl: baseUrl);
   }
 
@@ -61,4 +54,18 @@ abstract class AccountsClient {
     @Header("Authorization") String authHeader,
     @Body() RevokeAppIdRequest request,
   );
+
+  static List<Interceptor> _getInterceptors() {
+    if (kDebugMode) {
+      return [
+        PrettyDioLogger(
+          requestHeader: true,
+          requestBody: true,
+          responseHeader: true,
+          responseBody: true,
+        ),
+      ];
+    }
+    return [];
+  }
 }

@@ -2,16 +2,16 @@ import 'package:virtru_demo_flutter/api/api.dart';
 import 'package:virtru_demo_flutter/model/model.dart';
 
 class AccountsRepository {
-  final AccountsClient acmClient = AccountsClient();
+  final AccountsClient _accountsClient = AccountsClient();
 
   AccountsRepository();
 
   Future<void> revokeAppId({required String appId, required String userId}) {
-    return acmClient.revokeAppId(appId: appId, userId: userId);
+    return _accountsClient.revokeAppId(appId: appId, userId: userId);
   }
 
   Future<SessionId> requestCode({required String userId}) {
-    return acmClient.requestCode(userId: userId);
+    return _accountsClient.requestCode(userId: userId);
   }
 
   Future<AppIdBundle> sendCode({
@@ -19,6 +19,6 @@ class AccountsRepository {
     required String code,
     required String sessionId,
   }) {
-    return acmClient.sendCode(userId: userId, code: code, sessionId: sessionId);
+    return _accountsClient.sendCode(userId: userId, code: code, sessionId: sessionId);
   }
 }

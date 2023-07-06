@@ -3,7 +3,7 @@ part of 'received_emails_cubit.dart';
 class ReceivedEmailsState extends Equatable {
   final List<Policy>? policies;
   final int? bookmark;
-  final dynamic error;
+  final VirtruError? error;
 
   const ReceivedEmailsState._({
     this.policies,
@@ -20,7 +20,7 @@ class ReceivedEmailsState extends Equatable {
         );
 
   const ReceivedEmailsState.error(
-      List<Policy>? policies, int? bookmark, dynamic error)
+      List<Policy>? policies, int? bookmark, VirtruError error)
       : this._(
           policies: policies,
           bookmark: bookmark,

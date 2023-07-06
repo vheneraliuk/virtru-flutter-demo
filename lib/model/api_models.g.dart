@@ -89,6 +89,73 @@ Map<String, dynamic> _$AppIdBundleToJson(AppIdBundle instance) =>
       'platform': instance.platform,
     };
 
+Contract _$ContractFromJson(Map<String, dynamic> json) => Contract(
+      json['policyId'] as String,
+      json['authorizedUser'] as String,
+      json['key'] as String,
+      KeyAccess.fromJson(json['keyAccess'] as Map<String, dynamic>),
+      json['type'] as String,
+      json['displayName'] as String,
+      json['state'] as String,
+      json['activeEnd'] == null
+          ? null
+          : DateTime.parse(json['activeEnd'] as String),
+      (json['authorizations'] as List<dynamic>)
+          .map((e) => e as String)
+          .toList(),
+      json['isManaged'] as bool,
+      json['isOwner'] as bool,
+      json['isRecipient'] as bool,
+      json['sentFrom'] as String,
+      json['isInternal'] as bool,
+      (json['attributes'] as List<dynamic>).map((e) => e as String).toList(),
+      json['leaseTime'] as int,
+    );
+
+Map<String, dynamic> _$ContractToJson(Contract instance) => <String, dynamic>{
+      'policyId': instance.policyId,
+      'authorizedUser': instance.authorizedUser,
+      'key': instance.key,
+      'keyAccess': instance.keyAccess,
+      'type': instance.type,
+      'displayName': instance.displayName,
+      'state': instance.state,
+      'activeEnd': instance.activeEnd?.toIso8601String(),
+      'authorizations': instance.authorizations,
+      'isManaged': instance.isManaged,
+      'isOwner': instance.isOwner,
+      'isRecipient': instance.isRecipient,
+      'sentFrom': instance.sentFrom,
+      'isInternal': instance.isInternal,
+      'attributes': instance.attributes,
+      'leaseTime': instance.leaseTime,
+    };
+
+KeyAccess _$KeyAccessFromJson(Map<String, dynamic> json) => KeyAccess(
+      json['type'] as String,
+      json['version'] as String,
+      json['keyId'] as String,
+      KeyDetails.fromJson(json['details'] as Map<String, dynamic>),
+    );
+
+Map<String, dynamic> _$KeyAccessToJson(KeyAccess instance) => <String, dynamic>{
+      'type': instance.type,
+      'version': instance.version,
+      'keyId': instance.keyId,
+      'details': instance.details,
+    };
+
+KeyDetails _$KeyDetailsFromJson(Map<String, dynamic> json) => KeyDetails(
+      json['encoding'] as String,
+      json['body'] as String,
+    );
+
+Map<String, dynamic> _$KeyDetailsToJson(KeyDetails instance) =>
+    <String, dynamic>{
+      'encoding': instance.encoding,
+      'body': instance.body,
+    };
+
 PoliciesSearchResponse _$PoliciesSearchResponseFromJson(
         Map<String, dynamic> json) =>
     PoliciesSearchResponse(
@@ -165,4 +232,57 @@ Map<String, dynamic> _$PolicyToJson(Policy instance) => <String, dynamic>{
       'is': instance.statuses,
       'was': instance.was,
       'has': instance.has,
+    };
+
+ExtendedPolicy _$ExtendedPolicyFromJson(Map<String, dynamic> json) =>
+    ExtendedPolicy(
+      json['uuid'] as String,
+      json['orgId'] as String,
+      json['sentFrom'] as String,
+      (json['associatedAttachmentIds'] as List<dynamic>)
+          .map((e) => e as String)
+          .toList(),
+      (json['children'] as List<dynamic>).map((e) => e as String).toList(),
+      DateTime.parse(json['created'] as String),
+      json['displayName'] as String?,
+      DateTime.parse(json['lastModified'] as String),
+      DateTime.parse(json['secureEmailSentAt'] as String),
+      SimplePolicy.fromJson(json['simplePolicy'] as Map<String, dynamic>),
+    );
+
+Map<String, dynamic> _$ExtendedPolicyToJson(ExtendedPolicy instance) =>
+    <String, dynamic>{
+      'uuid': instance.uuid,
+      'orgId': instance.orgId,
+      'sentFrom': instance.sentFrom,
+      'associatedAttachmentIds': instance.associatedAttachmentIds,
+      'children': instance.children,
+      'created': instance.created.toIso8601String(),
+      'displayName': instance.displayName,
+      'lastModified': instance.lastModified.toIso8601String(),
+      'secureEmailSentAt': instance.secureEmailSentAt.toIso8601String(),
+      'simplePolicy': instance.simplePolicy,
+    };
+
+SimplePolicy _$SimplePolicyFromJson(Map<String, dynamic> json) => SimplePolicy(
+      (json['emailUsers'] as List<dynamic>).map((e) => e as String).toList(),
+      (json['authorizations'] as List<dynamic>)
+          .map((e) => e as String)
+          .toList(),
+      json['state'] as String,
+      json['isManaged'] as bool,
+      json['activeEnd'] == null
+          ? null
+          : DateTime.parse(json['activeEnd'] as String),
+      (json['accessedBy'] as List<dynamic>).map((e) => e as String).toList(),
+    );
+
+Map<String, dynamic> _$SimplePolicyToJson(SimplePolicy instance) =>
+    <String, dynamic>{
+      'emailUsers': instance.emailUsers,
+      'authorizations': instance.authorizations,
+      'state': instance.state,
+      'isManaged': instance.isManaged,
+      'activeEnd': instance.activeEnd?.toIso8601String(),
+      'accessedBy': instance.accessedBy,
     };

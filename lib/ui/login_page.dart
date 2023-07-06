@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:virtru_demo_flutter/bloc/bloc.dart';
 import 'package:virtru_demo_flutter/ui/ui.dart';
@@ -67,7 +66,7 @@ class _EmailFormState extends State<EmailForm> {
       child: Column(
         children: [
           Padding(
-            padding: const EdgeInsets.all(8.0),
+            padding: const EdgeInsets.all(24.0),
             child: TextFormField(
               onFieldSubmitted: (value) => validateAndRequestCode(),
               textInputAction: TextInputAction.send,
@@ -130,14 +129,11 @@ class _CodeFormState extends State<CodeForm> {
       child: Column(
         children: [
           Padding(
-            padding: const EdgeInsets.all(8.0),
+            padding: const EdgeInsets.all(24.0),
             child: TextFormField(
               onFieldSubmitted: (value) => validateAndSendCode(),
               textInputAction: TextInputAction.done,
               maxLength: 7,
-              inputFormatters: <TextInputFormatter>[
-                FilteringTextInputFormatter.digitsOnly
-              ],
               keyboardType: TextInputType.number,
               controller: codeTextController,
               autofocus: true,

@@ -19,7 +19,11 @@ class SentFilesCubit extends Cubit<SentFilesState> {
         result.bookmark,
       ));
     } catch (error) {
-      emit(SentFilesState.error(state.policies, state.bookmark, error));
+      emit(SentFilesState.error(
+        state.policies,
+        state.bookmark,
+        VirtruError.fromError(error),
+      ));
     }
   }
 }

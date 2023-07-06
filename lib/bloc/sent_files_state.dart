@@ -3,7 +3,7 @@ part of 'sent_files_cubit.dart';
 class SentFilesState extends Equatable {
   final List<Policy>? policies;
   final int? bookmark;
-  final dynamic error;
+  final VirtruError? error;
 
   const SentFilesState._({
     this.policies,

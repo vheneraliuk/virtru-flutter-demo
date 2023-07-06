@@ -3,7 +3,7 @@ part of 'received_files_cubit.dart';
 class ReceivedFilesState extends Equatable {
   final List<Policy>? policies;
   final int? bookmark;
-  final dynamic error;
+  final VirtruError? error;
 
   const ReceivedFilesState._({
     this.policies,
