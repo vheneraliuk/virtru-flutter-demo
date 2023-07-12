@@ -1,20 +1,32 @@
 PODS:
+  - app_links (1.0.0):
+    - FlutterMacOS
+  - cryptography_flutter (0.2.0):
+    - FlutterMacOS
   - FlutterMacOS (1.0.0)
   - shared_preferences_foundation (0.0.1):
     - Flutter
     - FlutterMacOS
 
 DEPENDENCIES:
+  - app_links (from `Flutter/ephemeral/.symlinks/plugins/app_links/macos`)
+  - cryptography_flutter (from `Flutter/ephemeral/.symlinks/plugins/cryptography_flutter/macos`)
   - FlutterMacOS (from `Flutter/ephemeral`)
   - shared_preferences_foundation (from `Flutter/ephemeral/.symlinks/plugins/shared_preferences_foundation/darwin`)
 
 EXTERNAL SOURCES:
+  app_links:
+    :path: Flutter/ephemeral/.symlinks/plugins/app_links/macos
+  cryptography_flutter:
+    :path: Flutter/ephemeral/.symlinks/plugins/cryptography_flutter/macos
   FlutterMacOS:
     :path: Flutter/ephemeral
   shared_preferences_foundation:
     :path: Flutter/ephemeral/.symlinks/plugins/shared_preferences_foundation/darwin
 
 SPEC CHECKSUMS:
+  app_links: 4481ed4d71f384b0c3ae5016f4633aa73d32ff67
+  cryptography_flutter: c9fa581b52e6fe19475432b6f44489c387f61e19
   FlutterMacOS: 8f6f14fa908a6fb3fba0cd85dbd81ec4b251fb24
   shared_preferences_foundation: 5b919d13b803cadd15ed2dc053125c68730e5126
 

@@ -1,4 +1,8 @@
+import 'dart:async';
+
+import 'package:after_layout/after_layout.dart';
 import 'package:app_links/app_links.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:virtru_demo_flutter/bloc/bloc.dart';
@@ -6,33 +10,50 @@ import 'package:virtru_demo_flutter/model/model.dart';
 import 'package:virtru_demo_flutter/repo/repo.dart';
 import 'package:virtru_demo_flutter/ui/ui.dart';
 
-class VirtruHomePage extends StatelessWidget {
-  VirtruHomePage({super.key});
+class VirtruHomePage extends StatefulWidget {
+  const VirtruHomePage({super.key});
 
+  @override
+  State<VirtruHomePage> createState() => _VirtruHomePageState();
+}
+
+class _VirtruHomePageState extends State<VirtruHomePage>
+    with AfterLayoutMixin<VirtruHomePage> {
   final _appLinks = AppLinks();
+
+  void _parseInitialAppUri(Uri? uri) {
+    if (uri == null) return;
+    var link = SecureReaderLink.fromUri(uri);
+    if (link == null) return;
+    debugPrint('Received URI: $uri');
+    debugPrint('MetaData Version: ${link.version}');
+    debugPrint('MetaData Url: ${link.metadataUrl}');
+    debugPrint('MetaData Key: ${link.metadataKey}');
+    debugPrint('MetaData Iv: ${link.metadataIv}');
+    debugPrint('Attachment Tdo Id: ${link.attachmentTdoId}');
+    debugPrint('Sender: ${link.sender}');
+    debugPrint('Policy Uuid: ${link.policyUuid}');
+    debugPrint('Campaign Id: ${link.campaignId}');
+    debugPrint('Template Id: ${link.templateId}');
+
+    EmailPage.go(
+      context,
+      policyId: link.getPolicyId(),
+      metaDataKey: link.metadataKey,
+    );
+  }
+
+  @override
+  FutureOr<void> afterFirstLayout(BuildContext context) {
+    if (kIsWeb) {
+      _appLinks.getInitialAppLink().then((uri) => _parseInitialAppUri(uri));
+    } else {
+      _appLinks.allUriLinkStream.listen((uri) => _parseInitialAppUri(uri));
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
-    _appLinks.uriLinkStream.listen((uri) {
-      var link = SecureReaderLink.fromUri(uri);
-      if (link == null) return;
-      debugPrint('Received URI: $uri');
-      debugPrint('MetaData Version: ${link.version}');
-      debugPrint('MetaData Url: ${link.metadataUrl}');
-      debugPrint('MetaData Key: ${link.metadataKey}');
-      debugPrint('MetaData Iv: ${link.metadataIv}');
-      debugPrint('Attachment Tdo Id: ${link.attachmentTdoId}');
-      debugPrint('Sender: ${link.sender}');
-      debugPrint('Policy Uuid: ${link.policyUuid}');
-      debugPrint('Campaign Id: ${link.campaignId}');
-      debugPrint('Template Id: ${link.templateId}');
-
-      EmailPage.go(
-        context,
-        policyId: link.getPolicyId(),
-        metaDataKey: link.metadataKey,
-      );
-    });
     return MultiRepositoryProvider(
       providers: [
         RepositoryProvider(
