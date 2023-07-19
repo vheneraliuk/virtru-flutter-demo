@@ -19,6 +19,12 @@ class AccountsRepository {
     required String code,
     required String sessionId,
   }) {
-    return _accountsClient.sendCode(userId: userId, code: code, sessionId: sessionId);
+    return _accountsClient.sendCode(
+        userId: userId, code: code, sessionId: sessionId);
+  }
+
+  Future<List<AppIdBundleResponse>> getAppIdBundle(
+      {required String appId, required String userId}) {
+    return _accountsClient.getAppIdBundle(appId: appId, userId: userId);
   }
 }

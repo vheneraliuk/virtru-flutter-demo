@@ -89,6 +89,27 @@ Map<String, dynamic> _$AppIdBundleToJson(AppIdBundle instance) =>
       'platform': instance.platform,
     };
 
+AppIdBundleResponse _$AppIdBundleResponseFromJson(Map<String, dynamic> json) =>
+    AppIdBundleResponse(
+      userId: json['userId'] as String?,
+      appId: json['appId'] as String?,
+      state: json['state'] as String?,
+      platform: json['platform'] as String?,
+      error: json['error'] == null
+          ? null
+          : VirtruError.fromJson(json['error'] as Map<String, dynamic>),
+    );
+
+Map<String, dynamic> _$AppIdBundleResponseToJson(
+        AppIdBundleResponse instance) =>
+    <String, dynamic>{
+      'userId': instance.userId,
+      'appId': instance.appId,
+      'state': instance.state,
+      'platform': instance.platform,
+      'error': instance.error,
+    };
+
 Contract _$ContractFromJson(Map<String, dynamic> json) => Contract(
       json['policyId'] as String,
       json['authorizedUser'] as String,

@@ -1,4 +1,7 @@
-class SecureReaderLink {
+import 'package:equatable/equatable.dart';
+import 'package:virtru_demo_flutter/helpers/helpers.dart';
+
+class SecureReaderLink extends Equatable {
   final String version;
   final String metadataUrl;
   final String metadataKey;
@@ -51,10 +54,7 @@ class SecureReaderLink {
 
   String getPolicyId() {
     if (policyUuid != null) return policyUuid!;
-    final policyIdReqExp = RegExp(
-      r'[a-hA-H0-9]{8}-[a-hA-H0-9]{4}-[a-hA-H0-9]{4}-[a-hA-H0-9]{4}-[a-hA-H0-9]{12}',
-    );
-    return policyIdReqExp.stringMatch(metadataUrl) ?? "";
+    return policyIdRegExp.stringMatch(metadataUrl) ?? "";
   }
 
   static Uri _replaceFragmentByQueryParams(Uri uri) {
@@ -70,4 +70,17 @@ class SecureReaderLink {
 
     return newUri;
   }
+
+  @override
+  List<Object?> get props => [
+        version,
+        metadataUrl,
+        sender,
+        policyUuid,
+        campaignId,
+        templateId,
+        metadataKey,
+        metadataIv,
+        attachmentTdoId,
+      ];
 }

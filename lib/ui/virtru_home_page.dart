@@ -86,6 +86,14 @@ class _VirtruHomePageState extends State<VirtruHomePage>
                   child: MultiBlocProvider(
                     providers: [
                       BlocProvider(
+                          create: (context) =>
+                              EncryptCubit(RepositoryProvider.of(context))),
+                      BlocProvider(
+                          create: (context) => DecryptCubit(
+                                RepositoryProvider.of(context),
+                                RepositoryProvider.of(context),
+                              )),
+                      BlocProvider(
                         create: (context) => SentEmailsCubit(
                             acmRepo: RepositoryProvider.of(context)),
                       ),

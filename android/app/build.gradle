@@ -28,11 +28,27 @@ apply from: "$flutterRoot/packages/flutter_tools/gradle/flutter.gradle"
 android {
     namespace "com.virtru.flutter.demo"
     compileSdkVersion flutter.compileSdkVersion
-    ndkVersion flutter.ndkVersion
+    ndkVersion "25.2.9519653"
 
     compileOptions {
         sourceCompatibility JavaVersion.VERSION_1_8
         targetCompatibility JavaVersion.VERSION_1_8
+    }
+
+    signingConfigs {
+        debug {
+            storeFile file('keystore/debug.keystore')
+            keyAlias "androiddebugkey"
+            storePassword "android"
+            keyPassword "android"
+        }
+
+        production {
+            storeFile file(System.getenv('ANDROID_SIGNING_KEY_PATH'))
+            keyAlias System.getenv('ANDROID_SIGNING_KEY_ALIAS')
+            storePassword System.getenv('ANDROID_SIGNING_KEY_STORE_PASS')
+            keyPassword System.getenv('ANDROID_SIGNING_KEY_PASS')
+        }
     }
 
     kotlinOptions {

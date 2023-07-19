@@ -1,6 +1,7 @@
 import 'dart:io';
 
 import 'package:json_annotation/json_annotation.dart';
+import 'package:virtru_demo_flutter/model/model.dart';
 
 part 'api_models.g.dart';
 
@@ -136,6 +137,31 @@ class AppIdBundle {
       _$AppIdBundleFromJson(json);
 
   Map<String, dynamic> toJson() => _$AppIdBundleToJson(this);
+}
+
+@JsonSerializable()
+class AppIdBundleResponse {
+  String? userId;
+  String? appId;
+  String? state;
+  String? platform;
+  VirtruError? error;
+
+  AppIdBundleResponse({
+    required this.userId,
+    required this.appId,
+    required this.state,
+    required this.platform,
+    required this.error,
+  });
+
+  factory AppIdBundleResponse.fromJson(Map<String, dynamic> json) =>
+      _$AppIdBundleResponseFromJson(json);
+
+  Map<String, dynamic> toJson() => _$AppIdBundleResponseToJson(this);
+
+  toAppIdBundle() => AppIdBundle(
+      userId: userId!, appId: appId!, state: state!, platform: platform!);
 }
 
 String getPlatform() {

@@ -6,3 +6,5 @@ export 'received_emails_cubit.dart';
 export 'received_files_cubit.dart';
 export 'sent_emails_cubit.dart';
 export 'sent_files_cubit.dart';
+export 'encrypt_cubit.dart';
+export 'decrypt_cubit.dart';

@@ -37,6 +37,13 @@ abstract class AccountsClient {
     );
   }
 
+  Future<List<AppIdBundleResponse>> getAppIdBundle({
+    required String appId,
+    required String userId,
+  }) {
+    return _getAppIdBundle('Virtru [["$appId","$userId"]]');
+  }
+
   @POST("/api/code-login")
   @Headers({
     'Origin': 'https://sdk.virtru.com',
@@ -53,6 +60,11 @@ abstract class AccountsClient {
   Future<void> _revokeAppId(
     @Header("Authorization") String authHeader,
     @Body() RevokeAppIdRequest request,
+  );
+
+  @GET("/api/appIdBundle")
+  Future<List<AppIdBundleResponse>> _getAppIdBundle(
+    @Header("Authorization") String authHeader,
   );
 
   static List<Interceptor> _getInterceptors() {

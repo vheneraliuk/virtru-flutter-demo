@@ -1,4 +1,5 @@
 import 'package:bloc/bloc.dart';
+import 'package:collection/collection.dart';
 import 'package:dio/dio.dart';
 import 'package:equatable/equatable.dart';
 import 'package:virtru_demo_flutter/model/model.dart';
@@ -14,6 +15,7 @@ class LoginCubit extends Cubit<LoginState> {
       : super(const LoginState.initial());
 
   void sendCode(String email) async {
+    emit(state.copyWith(loading: true));
     try {
       var sessionId = await accountRepo.requestCode(userId: email);
       emit(LoginState.codePending(email, sessionId.sessionId));
@@ -25,12 +27,39 @@ class LoginCubit extends Cubit<LoginState> {
   void activate(String code) async {
     var currentState = state;
     if (currentState.status != LoginStatus.pendingCode) return;
+    emit(state.copyWith(loading: true));
     try {
       var appIdBundle = await accountRepo.sendCode(
         userId: currentState.userId!,
         code: code,
         sessionId: currentState.sessionId!,
       );
+      userRepo.saveUser(User(
+        userId: appIdBundle.userId,
+        appId: appIdBundle.appId,
+      ));
+      emit(LoginState.authenticated(appIdBundle));
+    } on DioException catch (error) {
+      _emitError(error);
+    }
+  }
+
+  void activateWithAppId(String userId, String appId) async {
+    emit(state.copyWith(loading: true));
+    try {
+      var appIdBundles = await accountRepo.getAppIdBundle(
+        userId: userId,
+        appId: appId,
+      );
+      final appIdBundleResponse =
+          appIdBundles.firstWhereOrNull((bundle) => bundle.appId == appId);
+      if (appIdBundleResponse == null) {
+        emit(state.copyWith(
+            error: VirtruError(
+                name: "Wrong creds", message: "Wrong AppId or Email")));
+        return;
+      }
+      final appIdBundle = appIdBundleResponse.toAppIdBundle();
       userRepo.saveUser(User(
         userId: appIdBundle.userId,
         appId: appIdBundle.appId,

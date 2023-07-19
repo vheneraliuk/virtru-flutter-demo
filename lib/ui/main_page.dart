@@ -1,11 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:infinite_scroll_pagination/infinite_scroll_pagination.dart';
-import 'package:intl/intl.dart';
 import 'package:virtru_demo_flutter/bloc/bloc.dart';
-import 'package:virtru_demo_flutter/helpers/helpers.dart';
 import 'package:virtru_demo_flutter/model/model.dart';
 import 'package:virtru_demo_flutter/ui/ui.dart';
+import 'package:virtru_demo_flutter/ui/widgets/widgets.dart';
 
 class MainPage extends StatefulWidget {
   const MainPage({super.key});
@@ -23,11 +22,14 @@ class _MainPageState extends State<MainPage> {
       PagingController(firstPageKey: 0);
   final PagingController<int, Policy> _receivedFilesPagingController =
       PagingController(firstPageKey: 0);
-  static final _titles = [
-    "Sent Emails",
-    "Received Emails",
-    "Sent Files",
-    "Received Files"
+
+  static final _drawerItems = [
+    _DrawerItem("encrypt", "Encrypt", Icons.lock_outline),
+    _DrawerItem("decrypt", "Decrypt", Icons.lock_open_outlined),
+    _DrawerItem("se", "Sent Emails", Icons.outbox_outlined),
+    _DrawerItem("re", "Received Emails", Icons.inbox_outlined),
+    _DrawerItem("sf", "Sent Files", Icons.drive_file_move_outline),
+    _DrawerItem("rf", "Received Files", Icons.drive_file_move_rtl_outlined),
   ];
 
   int _selectedIndex = 0;
@@ -90,62 +92,20 @@ class _MainPageState extends State<MainPage> {
   @override
   Widget build(BuildContext context) {
     var iconColor = Theme.of(context).colorScheme.primary;
-    final List<Widget> widgetOptions = <Widget>[
-      SentEmails(pagingController: _sentEmailsPagingController),
-      ReceivedEmails(pagingController: _receivedEmailsPagingController),
-      SentFiles(pagingController: _sentFilesPagingController),
-      ReceivedFiles(pagingController: _receivedFilesPagingController),
-    ];
-    return MultiBlocListener(
-      listeners: [
-        BlocListener<SentEmailsCubit, SentEmailsState>(
-          listener: (context, state) {
-            if (state.error != null) {
-              _sentEmailsPagingController.error = state.error!.message;
-            } else if (state.policies != null) {
-              _sentEmailsPagingController.appendPage(
-                  state.policies!, state.bookmark);
-            }
-          },
-        ),
-        BlocListener<ReceivedEmailsCubit, ReceivedEmailsState>(
-          listener: (context, state) {
-            if (state.error != null) {
-              _receivedEmailsPagingController.error = state.error!.message;
-            } else if (state.policies != null) {
-              _receivedEmailsPagingController.appendPage(
-                  state.policies!, state.bookmark);
-            }
-          },
-        ),
-        BlocListener<SentFilesCubit, SentFilesState>(
-          listener: (context, state) {
-            if (state.error != null) {
-              _sentFilesPagingController.error = state.error!.message;
-            } else if (state.policies != null) {
-              _sentFilesPagingController.appendPage(
-                  state.policies!, state.bookmark);
-            }
-          },
-        ),
-        BlocListener<ReceivedFilesCubit, ReceivedFilesState>(
-          listener: (context, state) {
-            if (state.error != null) {
-              _receivedFilesPagingController.error = state.error!.message;
-            } else if (state.policies != null) {
-              _receivedFilesPagingController.appendPage(
-                  state.policies!, state.bookmark);
-            }
-          },
-        ),
-        BlocListener<LoginCubit, LoginState>(
-          listener: (context, state) {
-            if (state.status == LoginStatus.initial) {
-              BlocProvider.of<AuthCubit>(context).reloadCurrentState();
-            }
-          },
-        ),
-      ],
+    final widgetOptions = <String, Widget>{
+      "encrypt": const EncryptWidget(),
+      "decrypt": const DecryptWidget(),
+      "se": SentEmails(pagingController: _sentEmailsPagingController),
+      "re": ReceivedEmails(pagingController: _receivedEmailsPagingController),
+      "sf": SentFiles(pagingController: _sentFilesPagingController),
+      "rf": ReceivedFiles(pagingController: _receivedFilesPagingController),
+    };
+    return BlocListener<LoginCubit, LoginState>(
+      listener: (context, state) {
+        if (state.status == LoginStatus.initial) {
+          BlocProvider.of<AuthCubit>(context).reloadCurrentState();
+        }
+      },
       child: VirtruAppBar(
         drawer: SafeArea(
           child: Drawer(
@@ -174,47 +134,28 @@ class _MainPageState extends State<MainPage> {
                           );
                         },
                       ),
-                      ListTile(
-                          onTap: () => _onItemTapped(0),
-                          selected: _selectedIndex == 0,
-                          leading: Icon(
-                            Icons.outbox,
-                            color: iconColor,
-                          ),
-                          title: Text(_titles[0])),
-                      ListTile(
-                          onTap: () => _onItemTapped(1),
-                          selected: _selectedIndex == 1,
-                          leading: Icon(
-                            Icons.inbox,
-                            color: iconColor,
-                          ),
-                          title: Text(_titles[1])),
-                      ListTile(
-                          onTap: () => _onItemTapped(2),
-                          selected: _selectedIndex == 2,
-                          leading: Icon(
-                            Icons.drive_file_move_sharp,
-                            color: iconColor,
-                          ),
-                          title: Text(_titles[2])),
-                      ListTile(
-                          onTap: () => _onItemTapped(3),
-                          selected: _selectedIndex == 3,
-                          leading: Icon(
-                            Icons.drive_file_move_rtl_sharp,
-                            color: iconColor,
-                          ),
-                          title: Text(_titles[3])),
+                      Column(
+                        children: _drawerItems
+                            .asMap()
+                            .entries
+                            .map((entry) => ListTile(
+                                onTap: () => _onItemTapped(entry.key),
+                                selected: _selectedIndex == entry.key,
+                                leading: Icon(
+                                  entry.value.icon,
+                                  color: iconColor,
+                                ),
+                                title: Text(entry.value.title)))
+                            .toList(),
+                      ),
                     ],
                   ),
                 ),
-                const Spacer(),
                 ListTile(
                   onTap: () => _onLogOutTapped(),
                   title: const Text('Log out'),
                   leading: Icon(
-                    Icons.logout,
+                    Icons.logout_outlined,
                     color: iconColor,
                   ),
                 ),
@@ -222,136 +163,18 @@ class _MainPageState extends State<MainPage> {
             ),
           ),
         ),
-        title: _titles[_selectedIndex],
-        body: widgetOptions[_selectedIndex],
+        title: _drawerItems[_selectedIndex].title,
+        body: widgetOptions[_drawerItems[_selectedIndex].key] ??
+            const Placeholder(),
       ),
     );
   }
 }
 
-class SentEmails extends StatelessWidget {
-  const SentEmails({super.key, required this.pagingController});
+class _DrawerItem {
+  final String key;
+  final String title;
+  final IconData icon;
 
-  final PagingController<int, Policy> pagingController;
-
-  @override
-  Widget build(BuildContext context) {
-    return RefreshIndicator(
-      onRefresh: () => Future.sync(() => pagingController.refresh()),
-      child: PagedListView<int, Policy>(
-        pagingController: pagingController,
-        builderDelegate: PagedChildBuilderDelegate<Policy>(
-            itemBuilder: (context, item, index) => ListTile(
-                  // onTap: () => EmailPage.goHere(context, policyId: item.id),
-                  leading: Icon(
-                    Icons.mail_lock,
-                    color: Theme.of(context).colorScheme.primary,
-                  ),
-                  title: Text(
-                    item.subject ?? '(No subject)',
-                    maxLines: 1,
-                    overflow: TextOverflow.ellipsis,
-                  ),
-                  subtitle: Text(_getRecipientsText(item.to)),
-                  trailing: Text(getDateString(item.dateSent)),
-                )),
-      ),
-    );
-  }
-}
-
-class ReceivedEmails extends StatelessWidget {
-  const ReceivedEmails({super.key, required this.pagingController});
-
-  final PagingController<int, Policy> pagingController;
-
-  @override
-  Widget build(BuildContext context) {
-    return RefreshIndicator(
-      onRefresh: () => Future.sync(() => pagingController.refresh()),
-      child: PagedListView<int, Policy>(
-        pagingController: pagingController,
-        builderDelegate: PagedChildBuilderDelegate<Policy>(
-            itemBuilder: (context, item, index) => ListTile(
-                  // onTap: () => EmailPage.goHere(context, policyId: item.id),
-                  leading: Icon(
-                    Icons.mail_lock,
-                    color: Theme.of(context).colorScheme.primary,
-                  ),
-                  title: Text(
-                    item.subject ?? '(No subject)',
-                    maxLines: 1,
-                    overflow: TextOverflow.ellipsis,
-                  ),
-                  subtitle: Text(item.from),
-                  trailing: Text(getDateString(item.dateSent)),
-                )),
-      ),
-    );
-  }
-}
-
-class SentFiles extends StatelessWidget {
-  const SentFiles({super.key, required this.pagingController});
-
-  final PagingController<int, Policy> pagingController;
-
-  @override
-  Widget build(BuildContext context) {
-    return RefreshIndicator(
-      onRefresh: () => Future.sync(() => pagingController.refresh()),
-      child: PagedListView<int, Policy>(
-        pagingController: pagingController,
-        builderDelegate: PagedChildBuilderDelegate<Policy>(
-            itemBuilder: (context, item, index) => ListTile(
-                  leading: Icon(
-                    Icons.file_present_rounded,
-                    color: Theme.of(context).colorScheme.primary,
-                  ),
-                  title: Text(
-                    item.filename ?? '(No filename)',
-                    maxLines: 1,
-                    overflow: TextOverflow.ellipsis,
-                  ),
-                  subtitle: Text(_getRecipientsText(item.to)),
-                  trailing: Text(getDateString(item.dateSent)),
-                )),
-      ),
-    );
-  }
-}
-
-class ReceivedFiles extends StatelessWidget {
-  const ReceivedFiles({super.key, required this.pagingController});
-
-  final PagingController<int, Policy> pagingController;
-
-  @override
-  Widget build(BuildContext context) {
-    return RefreshIndicator(
-      onRefresh: () => Future.sync(() => pagingController.refresh()),
-      child: PagedListView<int, Policy>(
-        pagingController: pagingController,
-        builderDelegate: PagedChildBuilderDelegate<Policy>(
-            itemBuilder: (context, item, index) => ListTile(
-                  leading: Icon(
-                    Icons.file_present_rounded,
-                    color: Theme.of(context).colorScheme.primary,
-                  ),
-                  title: Text(
-                    item.filename ?? '(No filename)',
-                    maxLines: 1,
-                    overflow: TextOverflow.ellipsis,
-                  ),
-                  subtitle: Text(item.from),
-                  trailing: Text(getDateString(item.dateSent)),
-                )),
-      ),
-    );
-  }
-}
-
-String _getRecipientsText(List<String> to) {
-  if (to.isEmpty) return '(No Recipients)';
-  return '${to.first}${to.length > 1 ? ' (+${to.length - 1})' : ''}';
+  _DrawerItem(this.key, this.title, this.icon);
 }

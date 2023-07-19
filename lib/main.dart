@@ -1,21 +1,10 @@
-import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:virtru_demo_flutter/bloc/bloc.dart';
-import 'package:virtru_demo_flutter/model/model.dart';
 import 'package:virtru_demo_flutter/repo/repo.dart';
 import 'package:virtru_demo_flutter/ui/ui.dart';
 
 void main() {
-  if (kIsWeb) {
-    // Because of CORS issue on Web, activation is not working, need to provide generated appId and userId
-    UserRepository().saveUser(
-      const User(
-        userId: "%userId%",
-        appId: "%appId%",
-      ),
-    );
-  }
   runApp(const MyApp());
 }
 
