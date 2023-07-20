@@ -4,6 +4,7 @@ class EncryptState extends Equatable {
   final List<String> shareWith;
   final bool loading;
   final bool encryptToRca;
+  final SecuritySettings securitySettings;
   final File? inputFile;
   final File? encryptedFile;
   final String? rcaLink;
@@ -11,6 +12,7 @@ class EncryptState extends Equatable {
 
   const EncryptState._({
     required this.shareWith,
+    required this.securitySettings,
     this.loading = false,
     this.encryptToRca = false,
     this.inputFile,
@@ -20,12 +22,16 @@ class EncryptState extends Equatable {
   });
 
   factory EncryptState.initial() {
-    return EncryptState._(shareWith: List.empty(growable: true));
+    return EncryptState._(
+      shareWith: List.empty(growable: true),
+      securitySettings: SecuritySettings.initial(),
+    );
   }
 
   EncryptState copyWith({
     String? newShareWith,
     String? removeShareWith,
+    SecuritySettings? securitySettings,
     bool loading = false,
     bool? encryptToRca,
     File? inputFile,
@@ -43,6 +49,7 @@ class EncryptState extends Equatable {
     }
     return EncryptState._(
       shareWith: newShareWithList,
+      securitySettings: securitySettings ?? this.securitySettings,
       loading: loading,
       inputFile: removeInputFile ? null : inputFile ?? this.inputFile,
       encryptToRca: encryptToRca ?? this.encryptToRca,
@@ -53,6 +60,13 @@ class EncryptState extends Equatable {
   }
 
   @override
-  List<Object?> get props =>
-      [shareWith, loading, encryptToRca, inputFile, encryptedFile, error];
+  List<Object?> get props => [
+        shareWith,
+        securitySettings,
+        loading,
+        encryptToRca,
+        inputFile,
+        encryptedFile,
+        error,
+      ];
 }

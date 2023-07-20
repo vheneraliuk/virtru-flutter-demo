@@ -129,6 +129,7 @@ class EncryptCubit extends Cubit<EncryptState> {
     try {
       final inputFileName = basename(inputFile.path);
       final encryptParams = virtru.EncryptFileParams.fromFile(inputFile)
+        ..setPolicy(_createPolicy())
         ..setDisplayName(inputFileName)
         ..setDisplayMessage("This file was encrypted with Flutter App")
         ..shareWithUsers(state.shareWith);
@@ -156,6 +157,7 @@ class EncryptCubit extends Cubit<EncryptState> {
       };
       final encryptParams =
           virtru.EncryptFileParams.fromFiles(inputFile, outputFile)
+            ..setPolicy(_createPolicy())
             ..setDisplayName(inputFileName)
             ..setDisplayMessage("This file was encrypted with Flutter App")
             ..shareWithUsers(state.shareWith);
@@ -181,6 +183,7 @@ class EncryptCubit extends Cubit<EncryptState> {
       final sourceFileName =
           "Flutter_Demo_${DateTime.now().millisecondsSinceEpoch}.txt";
       final encryptParams = virtru.EncryptStringParams(message)
+        ..setPolicy(_createPolicy())
         ..setDisplayName(sourceFileName)
         ..setDisplayMessage("This message was encrypted with Flutter App")
         ..setMimeType(ContentType.text.mimeType)
@@ -200,6 +203,7 @@ class EncryptCubit extends Cubit<EncryptState> {
       final sourceFileName =
           "Flutter_Demo_${DateTime.now().millisecondsSinceEpoch}.txt";
       final encryptParams = virtru.EncryptStringParams(message)
+        ..setPolicy(_createPolicy())
         ..setDisplayName(sourceFileName)
         ..setDisplayMessage("This message was encrypted with Flutter App")
         ..setMimeType(ContentType.text.mimeType)
@@ -233,5 +237,40 @@ class EncryptCubit extends Cubit<EncryptState> {
 
   void _emitError(VirtruError error) {
     emit(state.copyWith(error: error));
+  }
+
+  void setPersistentProtection(bool enable) {
+    emit(state.copyWith(
+        securitySettings: state.securitySettings.copyWith(
+      persistentProtectionEnabled: enable,
+    )));
+  }
+
+  void setWatermarkEnable(bool enable) {
+    emit(state.copyWith(
+        securitySettings: state.securitySettings.copyWith(
+      watermarkEnabled: enable,
+    )));
+  }
+
+  void setExpirationDate(DateTime? expirationDate) {
+    emit(state.copyWith(
+        securitySettings: state.securitySettings.copyWith(
+      expirationDate: expirationDate,
+      removeExpiration: expirationDate == null,
+    )));
+  }
+
+  virtru.Policy _createPolicy() {
+    return virtru.Policy()
+      ..setPersistentProtectionEnabled(
+        state.securitySettings.persistentProtectionEnabled,
+      )
+      ..setWatermarkEnabled(
+        state.securitySettings.watermarkEnabled,
+      )
+      ..setExpirationDate(
+        state.securitySettings.expirationDate,
+      );
   }
 }

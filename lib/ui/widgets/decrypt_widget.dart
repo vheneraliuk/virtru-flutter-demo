@@ -53,7 +53,7 @@ class _DecryptWidgetState extends State<DecryptWidget> {
             return SizedBox(
               width: double.infinity,
               child: SingleChildScrollView(
-                padding: const EdgeInsets.all(16.0),
+                padding: const EdgeInsets.all(24.0),
                 child: Column(
                   children: [
                     const Padding(
@@ -129,10 +129,13 @@ class _DecryptWidgetState extends State<DecryptWidget> {
                         ],
                       ),
                 const Divider(),
-                OutlinedButton.icon(
-                    onPressed: _validateAndDecrypt,
-                    icon: const Icon(Icons.lock_open_outlined),
-                    label: const Text("Decrypt")),
+                Padding(
+                  padding: const EdgeInsets.only(bottom: 24),
+                  child: OutlinedButton.icon(
+                      onPressed: _validateAndDecrypt,
+                      icon: const Icon(Icons.lock_open_outlined),
+                      label: const Text("Decrypt")),
+                ),
               ],
             ),
           );

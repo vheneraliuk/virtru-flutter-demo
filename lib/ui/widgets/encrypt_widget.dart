@@ -3,6 +3,7 @@ import 'dart:io';
 import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:intl/intl.dart';
 import 'package:path/path.dart' show basename;
 import 'package:share_plus/share_plus.dart';
 import 'package:virtru_demo_flutter/bloc/bloc.dart';
@@ -128,25 +129,85 @@ class _EncryptWidgetState extends State<EncryptWidget> {
                       )
                     : Container(),
                 const Divider(),
+                Column(
+                  children: [
+                    const Padding(
+                      padding: EdgeInsets.all(8.0),
+                      child: Text("Security settings:"),
+                    ),
+                    CheckboxListTile(
+                      onChanged: (value) =>
+                          _bloc.setPersistentProtection(value!),
+                      activeColor: Theme.of(context).colorScheme.primary,
+                      selected:
+                          state.securitySettings.persistentProtectionEnabled,
+                      value: state.securitySettings.persistentProtectionEnabled,
+                      title: const Text("Persistent protection"),
+                      secondary: const Icon(
+                        Icons.file_present_outlined,
+                      ),
+                    ),
+                    CheckboxListTile(
+                      onChanged: (value) => _bloc.setWatermarkEnable(value!),
+                      activeColor: Theme.of(context).colorScheme.primary,
+                      selected: state.securitySettings.watermarkEnabled,
+                      value: state.securitySettings.watermarkEnabled,
+                      title: const Text("Enable watermarks"),
+                      secondary: const Icon(
+                        Icons.water_drop_outlined,
+                      ),
+                    ),
+                    ListTile(
+                      onTap: _showDatePicker,
+                      leading: const Icon(
+                        Icons.calendar_month,
+                      ),
+                      trailing: Text(
+                        state.securitySettings.expirationDate == null
+                            ? ""
+                            : DateFormat.yMMMd().format(
+                                state.securitySettings.expirationDate!,
+                              ),
+                        style: const TextStyle(fontSize: 15),
+                      ),
+                      title: Text(
+                        state.securitySettings.expirationDate == null
+                            ? "Expiration"
+                            : "Expires on",
+                      ),
+                      selectedColor: Theme.of(context).colorScheme.primary,
+                      selected: state.securitySettings.expirationDate != null,
+                    ),
+                  ],
+                ),
+                const Divider(),
                 CheckboxListTile(
+                    activeColor: Theme.of(context).colorScheme.primary,
+                    selected: state.encryptToRca,
+                    secondary: const Icon(
+                      Icons.link_outlined,
+                    ),
                     title: const Text("Result as RCA Link"),
                     value: state.encryptToRca,
                     onChanged: (value) => _bloc.setRcaLinkAsResult(value!)),
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    Padding(
-                      padding: const EdgeInsets.only(right: 24.0),
-                      child: OutlinedButton.icon(
-                          onPressed: _shareWith,
-                          icon: const Icon(Icons.add_reaction_outlined),
-                          label: const Text("Share with")),
-                    ),
-                    OutlinedButton.icon(
-                        onPressed: _validateAndEncrypt,
-                        icon: const Icon(Icons.lock_outline),
-                        label: const Text("Encrypt")),
-                  ],
+                Padding(
+                  padding: const EdgeInsets.only(bottom: 24),
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      Padding(
+                        padding: const EdgeInsets.only(right: 24.0),
+                        child: OutlinedButton.icon(
+                            onPressed: _shareWith,
+                            icon: const Icon(Icons.add_reaction_outlined),
+                            label: const Text("Share with")),
+                      ),
+                      OutlinedButton.icon(
+                          onPressed: _validateAndEncrypt,
+                          icon: const Icon(Icons.lock_outline),
+                          label: const Text("Encrypt")),
+                    ],
+                  ),
                 ),
               ],
             ),
@@ -208,11 +269,9 @@ class _EncryptWidgetState extends State<EncryptWidget> {
     );
     _clear();
   }
+
   void _shareLink(String rcaLink) async {
-    await Share.share(
-      rcaLink,
-      subject: "Virtru RCA Link"
-    );
+    await Share.share(rcaLink, subject: "Virtru RCA Link");
     _clear();
   }
 
@@ -228,6 +287,21 @@ class _EncryptWidgetState extends State<EncryptWidget> {
       context: context,
       builder: (_) => AddUserDialog(_bloc),
     );
+  }
+
+  _showDatePicker() async {
+    final result = await showDatePicker(
+      context: context,
+      initialDate:
+          _bloc.state.securitySettings.expirationDate ?? DateTime.now(),
+      firstDate: DateTime.now(),
+      lastDate: DateTime.now().add(const Duration(days: 365)),
+      helpText: "Select expiration date",
+      cancelText: "Remove",
+      confirmText: "Set",
+    );
+
+    _bloc.setExpirationDate(result);
   }
 
   _addFile() async {

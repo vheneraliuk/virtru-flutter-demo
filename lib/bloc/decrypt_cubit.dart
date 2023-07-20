@@ -74,12 +74,16 @@ class DecryptCubit extends Cubit<DecryptState> {
       return;
     }
 
-    final contract = await _acmRepo.getContract(policyId: policyId);
+    try {
+      final contract = await _acmRepo.getContract(policyId: policyId);
 
-    if (contract.type == "file") {
-      _decryptRcaToFile(rcaLink, contract.displayName, client);
-    } else {
-      _decryptRcaToString(rcaLink, client);
+      if (contract.type == "file") {
+        _decryptRcaToFile(rcaLink, contract.displayName, client);
+      } else {
+        _decryptRcaToString(rcaLink, client);
+      }
+    } catch (error) {
+      _emitError(VirtruError.fromError(error));
     }
   }
 
