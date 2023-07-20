@@ -221,7 +221,7 @@ class Contract {
 class KeyAccess {
   final String type;
   final String version;
-  final String keyId;
+  final String? keyId;
   final KeyDetails details;
 
   KeyAccess(this.type, this.version, this.keyId, this.details);
@@ -234,15 +234,57 @@ class KeyAccess {
 
 @JsonSerializable()
 class KeyDetails {
-  final String encoding;
-  final String body;
+  final String? encoding;
+  final String? body;
+  final EncryptionInformation? encryptionInformation;
+  final String? publicKeyFingerprint;
+  final Payload? payload;
 
-  KeyDetails(this.encoding, this.body);
+  KeyDetails(this.encoding, this.body, this.encryptionInformation,
+      this.publicKeyFingerprint, this.payload);
 
   factory KeyDetails.fromJson(Map<String, dynamic> json) =>
       _$KeyDetailsFromJson(json);
 
   Map<String, dynamic> toJson() => _$KeyDetailsToJson(this);
+}
+
+@JsonSerializable()
+class EncryptionInformation {
+  final KeyAccess keyAccess;
+  final EncryptionMethod encryptionMethod;
+
+  EncryptionInformation(this.keyAccess, this.encryptionMethod);
+
+  factory EncryptionInformation.fromJson(Map<String, dynamic> json) =>
+      _$EncryptionInformationFromJson(json);
+
+  Map<String, dynamic> toJson() => _$EncryptionInformationToJson(this);
+}
+
+@JsonSerializable()
+class Payload {
+  final String encoding;
+  final String body;
+
+  Payload(this.encoding, this.body);
+
+  factory Payload.fromJson(Map<String, dynamic> json) =>
+      _$PayloadFromJson(json);
+
+  Map<String, dynamic> toJson() => _$PayloadToJson(this);
+}
+
+@JsonSerializable()
+class EncryptionMethod {
+  final String algorithm;
+
+  EncryptionMethod(this.algorithm);
+
+  factory EncryptionMethod.fromJson(Map<String, dynamic> json) =>
+      _$EncryptionMethodFromJson(json);
+
+  Map<String, dynamic> toJson() => _$EncryptionMethodToJson(this);
 }
 
 @JsonSerializable()

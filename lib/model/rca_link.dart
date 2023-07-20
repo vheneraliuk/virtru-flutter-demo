@@ -3,10 +3,10 @@ import 'package:virtru_demo_flutter/helpers/helpers.dart';
 
 class RcaLink extends Equatable {
   final String version;
-  final String wrappedKey;
   final String payloadUri;
   final String contractUri;
   final String algorithm;
+  final String? wrappedKey;
 
   static RcaLink? fromString(String url) {
     return fromUri(Uri.parse(url));
@@ -17,14 +17,13 @@ class RcaLink extends Equatable {
     var params = newUri.queryParameters;
     var version = params['v'];
     if (version == null) return null;
-    var wrappedKey = params['wk'];
-    if (wrappedKey == null) return null;
     var payloadUri = params['wu'];
     if (payloadUri == null) return null;
     var contractUri = params['pu'];
     if (contractUri == null) return null;
     var algorithm = params['al'];
     if (algorithm == null) return null;
+    var wrappedKey = params['wk'];
     return RcaLink._(
       version: version,
       wrappedKey: wrappedKey,

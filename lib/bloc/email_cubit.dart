@@ -42,7 +42,7 @@ class EmailCubit extends Cubit<EmailState> {
           nonceLength: 12,
           macLength: 16);
       final payloadKey = await cipher.decrypt(secretBoxForWrappedKey,
-          secretKey: SecretKey(base64Decode(contract.keyAccess.details.body)));
+          secretKey: SecretKey(base64Decode(contract.keyAccess.details.body!)));
 
       final payloadBinary = await acmRepo.getPayload(policyId: policyId);
       final secretBoxForPayload = SecretBox.fromConcatenation(payloadBinary,

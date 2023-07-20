@@ -245,10 +245,10 @@ packages:
     dependency: "direct main"
     description:
       name: dio
-      sha256: a9d76e72985d7087eb7c5e7903224ae52b337131518d127c554b9405936752b8
+      sha256: "3866d67f93523161b643187af65f5ac08bc991a5bcdaf41a2d587fe4ccb49993"
       url: "https://pub.dev"
     source: hosted
-    version: "5.2.1+1"
+    version: "5.3.0"
   easy_isolate:
     dependency: transitive
     description:
@@ -793,10 +793,10 @@ packages:
     dependency: transitive
     description:
       name: sliver_tools
-      sha256: ccdc502098a8bfa07b3ec582c282620031481300035584e1bb3aca296a505e8c
+      sha256: eae28220badfb9d0559207badcbbc9ad5331aac829a88cb0964d330d2a4636a6
       url: "https://pub.dev"
     source: hosted
-    version: "0.2.10"
+    version: "0.2.12"
   source_gen:
     dependency: transitive
     description:
@@ -944,9 +944,11 @@ packages:
   virtru_sdk_flutter:
     dependency: "direct main"
     description:
-      path: "../virtru_sdk_flutter"
-      relative: true
-    source: path
+      path: "."
+      ref: main
+      resolved-ref: "127a47451ae75a6e2747a7f23fcbb07becabf6f4"
+      url: "https://github.com/vheneraliuk/virtru-flutter-sdk.git"
+    source: git
     version: "0.0.1"
   watcher:
     dependency: transitive

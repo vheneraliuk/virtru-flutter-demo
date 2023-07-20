@@ -53,12 +53,9 @@ dependencies:
   flutter_html: ^3.0.0-beta.2
   after_layout: ^1.2.0
   virtru_sdk_flutter:
-    # When depending on this package from a real application you should use:
-    #   virtru_sdk_flutter: ^x.y.z
-    # See https://dart.dev/tools/pub/dependencies#version-constraints
-    # The example app is bundled with the plugin so we use a path dependency on
-    # the parent directory to use the current plugin's version.
-    path: ../virtru_sdk_flutter
+    git:
+      url: https://github.com/vheneraliuk/virtru-flutter-sdk.git
+      ref: main
   share_plus: ^7.0.2
   permission_handler: ^10.4.3
   path_provider: ^2.0.15

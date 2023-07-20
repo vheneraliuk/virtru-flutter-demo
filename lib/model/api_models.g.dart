@@ -155,7 +155,7 @@ Map<String, dynamic> _$ContractToJson(Contract instance) => <String, dynamic>{
 KeyAccess _$KeyAccessFromJson(Map<String, dynamic> json) => KeyAccess(
       json['type'] as String,
       json['version'] as String,
-      json['keyId'] as String,
+      json['keyId'] as String?,
       KeyDetails.fromJson(json['details'] as Map<String, dynamic>),
     );
 
@@ -167,14 +167,60 @@ Map<String, dynamic> _$KeyAccessToJson(KeyAccess instance) => <String, dynamic>{
     };
 
 KeyDetails _$KeyDetailsFromJson(Map<String, dynamic> json) => KeyDetails(
-      json['encoding'] as String,
-      json['body'] as String,
+      json['encoding'] as String?,
+      json['body'] as String?,
+      json['encryptionInformation'] == null
+          ? null
+          : EncryptionInformation.fromJson(
+              json['encryptionInformation'] as Map<String, dynamic>),
+      json['publicKeyFingerprint'] as String?,
+      json['payload'] == null
+          ? null
+          : Payload.fromJson(json['payload'] as Map<String, dynamic>),
     );
 
 Map<String, dynamic> _$KeyDetailsToJson(KeyDetails instance) =>
     <String, dynamic>{
       'encoding': instance.encoding,
       'body': instance.body,
+      'encryptionInformation': instance.encryptionInformation,
+      'publicKeyFingerprint': instance.publicKeyFingerprint,
+      'payload': instance.payload,
+    };
+
+EncryptionInformation _$EncryptionInformationFromJson(
+        Map<String, dynamic> json) =>
+    EncryptionInformation(
+      KeyAccess.fromJson(json['keyAccess'] as Map<String, dynamic>),
+      EncryptionMethod.fromJson(
+          json['encryptionMethod'] as Map<String, dynamic>),
+    );
+
+Map<String, dynamic> _$EncryptionInformationToJson(
+        EncryptionInformation instance) =>
+    <String, dynamic>{
+      'keyAccess': instance.keyAccess,
+      'encryptionMethod': instance.encryptionMethod,
+    };
+
+Payload _$PayloadFromJson(Map<String, dynamic> json) => Payload(
+      json['encoding'] as String,
+      json['body'] as String,
+    );
+
+Map<String, dynamic> _$PayloadToJson(Payload instance) => <String, dynamic>{
+      'encoding': instance.encoding,
+      'body': instance.body,
+    };
+
+EncryptionMethod _$EncryptionMethodFromJson(Map<String, dynamic> json) =>
+    EncryptionMethod(
+      json['algorithm'] as String,
+    );
+
+Map<String, dynamic> _$EncryptionMethodToJson(EncryptionMethod instance) =>
+    <String, dynamic>{
+      'algorithm': instance.algorithm,
     };
 
 PoliciesSearchResponse _$PoliciesSearchResponseFromJson(
