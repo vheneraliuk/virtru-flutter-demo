@@ -24,17 +24,10 @@ class EncryptCubit extends Cubit<EncryptState> {
     if (client == null) {
       return;
     }
-    try {
-      if (state.encryptToRca) {
-        await _encryptStringToRca(message, client);
-      } else {
-        await _encryptStringToFile(message, client);
-      }
-    } on StateError catch (error) {
-      _emitError(VirtruError(name: "State error", message: error.message));
-    } catch (error) {
-      _emitError(VirtruError(
-          name: "Unknown error", message: "Oops, something went wrong"));
+    if (state.encryptToRca) {
+      await _encryptStringToRca(message, client);
+    } else {
+      await _encryptStringToFile(message, client);
     }
     client.dispose();
   }
@@ -53,86 +46,13 @@ class EncryptCubit extends Cubit<EncryptState> {
     if (client == null) {
       return;
     }
-    try {
-      if (state.encryptToRca) {
-        await _encryptFileToRca(inputFile, client);
-      } else {
-        await _encryptFileToFile(inputFile, client);
-      }
-    } on StateError catch (error) {
-      _emitError(VirtruError(name: "State error", message: error.message));
-    } catch (error) {
-      _emitError(VirtruError(
-          name: "Unknown error", message: "Oops, something went wrong"));
+    if (state.encryptToRca) {
+      await _encryptFileToRca(inputFile, client);
+    } else {
+      await _encryptFileToFile(inputFile, client);
     }
 
     client.dispose();
-  }
-
-  _encryptStringToFile(String message, virtru.Client client) async {
-    final sourceFileName =
-        "Flutter_Demo_${DateTime.now().millisecondsSinceEpoch}.txt";
-    final encryptParams = virtru.EncryptStringParams(message)
-      ..setDisplayName(sourceFileName)
-      ..setDisplayMessage("This message was encrypted with Flutter App")
-      ..setMimeType(ContentType.text.mimeType)
-      ..shareWithUsers(state.shareWith);
-    final encryptedString = await client.encryptString(encryptParams);
-    final encryptedFileName = '$sourceFileName$tdfHtmlExt';
-    final tempEncryptedFilePath =
-        "${(await getTemporaryDirectory()).path}/$encryptedFileName";
-    final encryptedFile = File(tempEncryptedFilePath);
-    await encryptedFile.writeAsString(encryptedString);
-    emit(state.copyWith(encryptedFile: encryptedFile));
-  }
-
-  _encryptStringToRca(String message, virtru.Client client) async {
-    final sourceFileName =
-        "Flutter_Demo_${DateTime.now().millisecondsSinceEpoch}.txt";
-    final encryptParams = virtru.EncryptStringParams(message)
-      ..setDisplayName(sourceFileName)
-      ..setDisplayMessage("This message was encrypted with Flutter App")
-      ..setMimeType(ContentType.text.mimeType)
-      ..shareWithUsers(state.shareWith);
-    final rcaLink = await client.encryptStringToRCA(encryptParams);
-    emit(state.copyWith(rcaLink: rcaLink));
-  }
-
-  _encryptFileToFile(File inputFile, virtru.Client client) async {
-    final fileSize = await inputFile.length();
-    final inputFileName = basename(inputFile.path);
-    final outputFile = switch (fileSize) {
-      < mb100 => File("${inputFile.path}$tdfHtmlExt"),
-      _ => File("${inputFile.path}$tdfExt")
-    };
-    final encryptParams =
-        virtru.EncryptFileParams.fromFiles(inputFile, outputFile)
-          ..setDisplayName(inputFileName)
-          ..setDisplayMessage("This file was encrypted with Flutter App")
-          ..shareWithUsers(state.shareWith);
-    final mimeType = lookupMimeType(inputFile.path);
-    if (mimeType != null) {
-      encryptParams.setMimeType(mimeType);
-    }
-    if (fileSize >= mb100) {
-      client.setZipProtocol(true);
-    }
-    await client.encryptFile(encryptParams);
-    emit(state.copyWith(encryptedFile: outputFile));
-  }
-
-  _encryptFileToRca(File inputFile, virtru.Client client) async {
-    final inputFileName = basename(inputFile.path);
-    final encryptParams = virtru.EncryptFileParams.fromFile(inputFile)
-        .setDisplayName(inputFileName)
-        .setDisplayMessage("This file was encrypted with Flutter App")
-        .shareWithUsers(state.shareWith);
-    final mimeType = lookupMimeType(inputFile.path);
-    if (mimeType != null) {
-      encryptParams.setMimeType(mimeType);
-    }
-    final rcaLink = await client.encryptFileToRCA(encryptParams);
-    emit(state.copyWith(rcaLink: rcaLink));
   }
 
   void setRcaLinkAsResult(bool enable) {
@@ -156,9 +76,9 @@ class EncryptCubit extends Cubit<EncryptState> {
     try {
       final inputFileName = basename(inputFile.path);
       final encryptParams = virtru.EncryptFileParams.fromFile(inputFile)
-          .setDisplayName(inputFileName)
-          .setDisplayMessage("This file was encrypted with Flutter App")
-          .shareWithUsers(state.shareWith);
+        ..setDisplayName(inputFileName)
+        ..setDisplayMessage("This file was encrypted with Flutter App")
+        ..shareWithUsers(state.shareWith);
       final mimeType = lookupMimeType(inputFile.path);
       if (mimeType != null) {
         encryptParams.setMimeType(mimeType);
@@ -166,8 +86,8 @@ class EncryptCubit extends Cubit<EncryptState> {
       final rcaLink = await client.encryptFileToRCA(encryptParams);
       debugPrint("New RCA Link: '$rcaLink'");
       emit(state.copyWith(loading: false));
-    } on StateError catch (error) {
-      _emitError(VirtruError(name: "State error", message: error.message));
+    } on virtru.NativeError catch (error) {
+      _emitError(VirtruError(name: "Native error", message: error.message));
     } catch (error) {
       _emitError(VirtruError(
           name: "Unknown error", message: "Oops, something went wrong"));
@@ -203,6 +123,100 @@ class EncryptCubit extends Cubit<EncryptState> {
         "${(await getTemporaryDirectory()).path}/$inputFileName";
     final tempInputFile = await inputFile.copy(tempInputFilePath);
     emit(state.copyWith(inputFile: tempInputFile));
+  }
+
+  _encryptFileToRca(File inputFile, virtru.Client client) async {
+    try {
+      final inputFileName = basename(inputFile.path);
+      final encryptParams = virtru.EncryptFileParams.fromFile(inputFile)
+        ..setDisplayName(inputFileName)
+        ..setDisplayMessage("This file was encrypted with Flutter App")
+        ..shareWithUsers(state.shareWith);
+      final mimeType = lookupMimeType(inputFile.path);
+      if (mimeType != null) {
+        encryptParams.setMimeType(mimeType);
+      }
+      final rcaLink = await client.encryptFileToRCA(encryptParams);
+      emit(state.copyWith(rcaLink: rcaLink));
+    } on virtru.NativeError catch (error) {
+      _emitError(VirtruError(name: "Native error", message: error.message));
+    } catch (error) {
+      _emitError(VirtruError(
+          name: "Unknown error", message: "Oops, something went wrong"));
+    }
+  }
+
+  _encryptFileToFile(File inputFile, virtru.Client client) async {
+    try {
+      final fileSize = await inputFile.length();
+      final inputFileName = basename(inputFile.path);
+      final outputFile = switch (fileSize) {
+        < oneHundredMb => File("${inputFile.path}$tdfHtmlExt"),
+        _ => File("${inputFile.path}$tdfExt")
+      };
+      final encryptParams =
+          virtru.EncryptFileParams.fromFiles(inputFile, outputFile)
+            ..setDisplayName(inputFileName)
+            ..setDisplayMessage("This file was encrypted with Flutter App")
+            ..shareWithUsers(state.shareWith);
+      final mimeType = lookupMimeType(inputFile.path);
+      if (mimeType != null) {
+        encryptParams.setMimeType(mimeType);
+      }
+      if (fileSize >= oneHundredMb) {
+        client.setZipProtocol(true);
+      }
+      await client.encryptFile(encryptParams);
+      emit(state.copyWith(encryptedFile: outputFile));
+    } on virtru.NativeError catch (error) {
+      _emitError(VirtruError(name: "Native error", message: error.message));
+    } catch (error) {
+      _emitError(VirtruError(
+          name: "Unknown error", message: "Oops, something went wrong"));
+    }
+  }
+
+  _encryptStringToRca(String message, virtru.Client client) async {
+    try {
+      final sourceFileName =
+          "Flutter_Demo_${DateTime.now().millisecondsSinceEpoch}.txt";
+      final encryptParams = virtru.EncryptStringParams(message)
+        ..setDisplayName(sourceFileName)
+        ..setDisplayMessage("This message was encrypted with Flutter App")
+        ..setMimeType(ContentType.text.mimeType)
+        ..shareWithUsers(state.shareWith);
+      final rcaLink = await client.encryptStringToRCA(encryptParams);
+      emit(state.copyWith(rcaLink: rcaLink));
+    } on virtru.NativeError catch (error) {
+      _emitError(VirtruError(name: "Native error", message: error.message));
+    } catch (error) {
+      _emitError(VirtruError(
+          name: "Unknown error", message: "Oops, something went wrong"));
+    }
+  }
+
+  _encryptStringToFile(String message, virtru.Client client) async {
+    try {
+      final sourceFileName =
+          "Flutter_Demo_${DateTime.now().millisecondsSinceEpoch}.txt";
+      final encryptParams = virtru.EncryptStringParams(message)
+        ..setDisplayName(sourceFileName)
+        ..setDisplayMessage("This message was encrypted with Flutter App")
+        ..setMimeType(ContentType.text.mimeType)
+        ..shareWithUsers(state.shareWith);
+      final encryptedString = await client.encryptString(encryptParams);
+      final encryptedFileName = '$sourceFileName$tdfHtmlExt';
+      final tempEncryptedFilePath =
+          "${(await getTemporaryDirectory()).path}/$encryptedFileName";
+      final encryptedFile = File(tempEncryptedFilePath);
+      await encryptedFile.writeAsString(encryptedString);
+      emit(state.copyWith(encryptedFile: encryptedFile));
+    } on virtru.NativeError catch (error) {
+      _emitError(VirtruError(name: "Native error", message: error.message));
+    } catch (error) {
+      _emitError(VirtruError(
+          name: "Unknown error", message: "Oops, something went wrong"));
+    }
   }
 
   Future<virtru.Client?> _getClient() async {

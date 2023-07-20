@@ -19,7 +19,7 @@ final urlRegExp = RegExp(
 const tdfHtmlExt = ".tdf.html";
 const tdfExt = ".tdf";
 
-const mb100 = 1024*1024*100;
+const oneHundredMb = 1024*1024*100;
 
 String getDateString(DateTime dateSent) {
   final now = DateTime.now().toUtc();

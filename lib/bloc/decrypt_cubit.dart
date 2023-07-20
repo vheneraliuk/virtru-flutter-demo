@@ -48,8 +48,8 @@ class DecryptCubit extends Cubit<DecryptState> {
       final outputFile = File(outputFilePath);
       await client.decryptFile(inputFile, outputFile);
       emit(state.copyWith(decryptedFile: outputFile));
-    } on StateError catch (error) {
-      _emitError(VirtruError(name: "State error", message: error.message));
+    } on virtru.NativeError catch (error) {
+      _emitError(VirtruError(name: "Native error", message: error.message));
     } catch (error) {
       _emitError(VirtruError(
           name: "Unknown error", message: "Oops, something went wrong"));
@@ -64,29 +64,22 @@ class DecryptCubit extends Cubit<DecryptState> {
     if (client == null) {
       return;
     }
-    try {
-      final parsedRca = RcaLink.fromString(rcaLink);
-      debugPrint("Parsed RCA: $parsedRca");
-      final policyId = parsedRca?.getPolicyId();
-      if (policyId == null) {
-        _emitError(VirtruError(
-            name: "Invalid RCA Link",
-            message: "Invalid or unsupported RCA Link"));
-        return;
-      }
-
-      final contract = await _acmRepo.getContract(policyId: policyId);
-
-      if (contract.type == "file") {
-        _encryptRcaToFile(rcaLink, contract.displayName, client);
-      } else {
-        _encryptRcaToString(rcaLink, client);
-      }
-    } on StateError catch (error) {
-      _emitError(VirtruError(name: "State error", message: error.message));
-    } catch (error) {
+    final parsedRca = RcaLink.fromString(rcaLink);
+    debugPrint("Parsed RCA: $parsedRca");
+    final policyId = parsedRca?.getPolicyId();
+    if (policyId == null) {
       _emitError(VirtruError(
-          name: "Unknown error", message: "Oops, something went wrong"));
+          name: "Invalid RCA Link",
+          message: "Invalid or unsupported RCA Link"));
+      return;
+    }
+
+    final contract = await _acmRepo.getContract(policyId: policyId);
+
+    if (contract.type == "file") {
+      _decryptRcaToFile(rcaLink, contract.displayName, client);
+    } else {
+      _decryptRcaToString(rcaLink, client);
     }
   }
 
@@ -109,17 +102,32 @@ class DecryptCubit extends Cubit<DecryptState> {
     emit(state.copyWith(inputFile: tempInputFile));
   }
 
-  void _encryptRcaToString(String rcaLink, virtru.Client client) async {
-    final result = await client.decryptRcaToString(rcaLink);
-    debugPrint("Result: '$result'");
-    emit(state.copyWith(decryptedString: result));
+  void _decryptRcaToString(String rcaLink, virtru.Client client) async {
+    try {
+      final result = await client.decryptRcaToString(rcaLink);
+      debugPrint("Result: '$result'");
+      emit(state.copyWith(decryptedString: result));
+    } on virtru.NativeError catch (error) {
+      _emitError(VirtruError(name: "Native error", message: error.message));
+    } catch (error) {
+      _emitError(VirtruError(
+          name: "Unknown error", message: "Oops, something went wrong"));
+    }
   }
 
-  void _encryptRcaToFile(
+  void _decryptRcaToFile(
       String rcaLink, String fileName, virtru.Client client) async {
-    File outputFile = File("${(await getTemporaryDirectory()).path}/$fileName");
-    await client.decryptRcaToFile(rcaLink, outputFile.path);
-    emit(state.copyWith(decryptedFile: outputFile));
+    try {
+      File outputFile =
+          File("${(await getTemporaryDirectory()).path}/$fileName");
+      await client.decryptRcaToFile(rcaLink, outputFile.path);
+      emit(state.copyWith(decryptedFile: outputFile));
+    } on virtru.NativeError catch (error) {
+      _emitError(VirtruError(name: "Native error", message: error.message));
+    } catch (error) {
+      _emitError(VirtruError(
+          name: "Unknown error", message: "Oops, something went wrong"));
+    }
   }
 
   Future<virtru.Client?> _getClient() async {

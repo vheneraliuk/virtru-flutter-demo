@@ -182,7 +182,6 @@ class _DecryptWidgetState extends State<DecryptWidget> {
           encryptedFile.path,
         )
       ],
-      text: "Decrypted file",
     );
     _clear();
   }

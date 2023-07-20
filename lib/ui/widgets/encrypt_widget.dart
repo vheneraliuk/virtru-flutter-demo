@@ -205,7 +205,6 @@ class _EncryptWidgetState extends State<EncryptWidget> {
           mimeType: ContentType.html.mimeType,
         )
       ],
-      text: "Secret message",
     );
     _clear();
   }
