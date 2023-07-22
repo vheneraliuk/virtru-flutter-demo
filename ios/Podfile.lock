@@ -106,7 +106,7 @@ SPEC CHECKSUMS:
   share_plus: 599aa54e4ea31d4b4c0e9c911bcc26c55e791028
   shared_preferences_foundation: 5b919d13b803cadd15ed2dc053125c68730e5126
   SwiftyGif: 93a1cc87bf3a51916001cf8f3d63835fb64c819f
-  virtru_sdk_flutter: 5ef87dcb771a97ec997234de038dfa2bd86e5dda
+  virtru_sdk_flutter: 45d4c60ed979b09d229bca56f9b66a3edf1a92e8
 
 PODFILE CHECKSUM: 70d9d25280d0dd177a5f637cdb0f0b0b12c6a189
 

@@ -636,10 +636,10 @@ packages:
     dependency: transitive
     description:
       name: plugin_platform_interface
-      sha256: "6a2128648c854906c53fa8e33986fc0247a1116122f9534dd20e3ab9e16a32bc"
+      sha256: "43798d895c929056255600343db8f049921cbec94d31ec87f1dc5c16c01935dd"
       url: "https://pub.dev"
     source: hosted
-    version: "2.1.4"
+    version: "2.1.5"
   pool:
     dependency: transitive
     description:
@@ -946,7 +946,7 @@ packages:
     description:
       path: "."
       ref: main
-      resolved-ref: "41ba4771d0416ac5fd2b2412fb78b5159d11e597"
+      resolved-ref: "75bab7df99286a7550c6ffa552cbf0d64bebde07"
       url: "https://github.com/vheneraliuk/virtru-flutter-sdk.git"
     source: git
     version: "0.0.1"

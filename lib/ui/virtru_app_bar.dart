@@ -17,11 +17,18 @@ class VirtruAppBar extends StatelessWidget {
           backgroundColor: Theme.of(context).colorScheme.inversePrimary,
           title: Text(title),
           actions: [
-            IconButton(
-              icon: const Icon(Icons.brightness_4_outlined),
-              tooltip: "Toggle Dark Mode",
-              onPressed: () {
-                BlocProvider.of<DarkModeCubit>(context).toggleDarkMode();
+            BlocBuilder<DarkModeCubit, DarkModeState>(
+              builder: (context, state) {
+                return IconButton(
+                  icon: Icon(
+                    state.darkMode
+                        ? Icons.light_mode_outlined
+                        : Icons.dark_mode_outlined,
+                  ),
+                  tooltip: "Toggle Dark Mode",
+                  onPressed:
+                      BlocProvider.of<DarkModeCubit>(context).toggleDarkMode,
+                );
               },
             )
           ],

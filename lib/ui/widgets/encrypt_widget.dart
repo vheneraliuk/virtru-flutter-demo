@@ -2,11 +2,14 @@ import 'dart:io';
 
 import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:intl/intl.dart';
 import 'package:path/path.dart' show basename;
 import 'package:share_plus/share_plus.dart';
 import 'package:virtru_demo_flutter/bloc/bloc.dart';
+import 'package:virtru_demo_flutter/helpers/helpers.dart';
+import 'package:virtru_demo_flutter/model/model.dart';
 import 'package:virtru_demo_flutter/ui/widgets/widgets.dart';
 
 class EncryptWidget extends StatefulWidget {
@@ -30,12 +33,6 @@ class _EncryptWidgetState extends State<EncryptWidget> {
   Widget build(BuildContext context) {
     return BlocListener<EncryptCubit, EncryptState>(
       listener: (context, state) {
-        if (state.encryptedFile != null) {
-          _shareFile(state.encryptedFile!);
-        }
-        if (state.rcaLink != null) {
-          _shareLink(state.rcaLink!);
-        }
         if (state.error != null) {
           var snackBar = SnackBar(
             backgroundColor: Theme.of(context).colorScheme.error,
@@ -50,170 +47,93 @@ class _EncryptWidgetState extends State<EncryptWidget> {
       child: BlocBuilder<EncryptCubit, EncryptState>(
         builder: (context, state) {
           if (state.loading) {
-            return const Center(
-              child: CircularProgressIndicator(),
+            return Center(
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                crossAxisAlignment: CrossAxisAlignment.center,
+                children: [
+                  Text(
+                    "Encrypting...",
+                    style: TextStyle(
+                        fontSize: 16,
+                        color: Theme.of(context).colorScheme.primary),
+                  ),
+                  const SizedBox(height: 16),
+                  const CircularProgressIndicator(),
+                ],
+              ),
             );
           }
           return SingleChildScrollView(
-            child: Column(
-              children: [
-                state.inputFile == null
-                    ? Column(
-                        children: [
-                          Form(
-                            key: _encryptFormKey,
-                            child: Padding(
-                              padding: const EdgeInsets.only(
-                                  left: 24, right: 24, top: 24, bottom: 8),
-                              child: TextFormField(
-                                textInputAction: TextInputAction.newline,
-                                controller: _messageTextController,
-                                textCapitalization:
-                                    TextCapitalization.sentences,
-                                minLines: 5,
-                                maxLines: 15,
-                                validator: (value) {
-                                  if (value == null || value.isEmpty) {
-                                    return 'You need some text to encrypt';
-                                  }
-                                  return null;
-                                },
-                                decoration: const InputDecoration(
-                                  labelText: 'Message to encrypt',
-                                  border: OutlineInputBorder(),
-                                ),
-                              ),
-                            ),
-                          ),
-                          const Text("OR"),
-                          OutlinedButton.icon(
-                              onPressed: _addFile,
-                              icon: const Icon(Icons.file_open_outlined),
-                              label: const Text("Encrypt file")),
-                        ],
-                      )
-                    : Column(
-                        children: [
-                          const Padding(
-                            padding: EdgeInsets.only(top: 24, bottom: 8),
-                            child: Text("File to encrypt:"),
-                          ),
-                          Chip(
-                            avatar: const Icon(Icons.file_present_outlined),
-                            label: Text(basename(state.inputFile!.path)),
-                            onDeleted: _bloc.removeInputFile,
-                          ),
-                        ],
-                      ),
-                state.shareWith.isNotEmpty
-                    ? Column(
-                        children: [
-                          const Divider(),
-                          const Text("Shared with:"),
-                          Padding(
-                            padding: const EdgeInsets.all(8.0),
-                            child: Wrap(
-                              alignment: WrapAlignment.center,
-                              spacing: 8,
-                              children: state.shareWith
-                                  .map((user) => Chip(
-                                        avatar: const Icon(Icons
-                                            .supervised_user_circle_outlined),
-                                        label: Text(user),
-                                        onDeleted: () => _bloc.removeUser(user),
-                                      ))
-                                  .toList(),
-                            ),
-                          ),
-                        ],
-                      )
-                    : Container(),
-                const Divider(),
-                Column(
-                  children: [
-                    const Padding(
-                      padding: EdgeInsets.all(8.0),
-                      child: Text("Security settings:"),
-                    ),
-                    CheckboxListTile(
-                      onChanged: (value) =>
-                          _bloc.setPersistentProtection(value!),
-                      activeColor: Theme.of(context).colorScheme.primary,
-                      selected:
-                          state.securitySettings.persistentProtectionEnabled,
-                      value: state.securitySettings.persistentProtectionEnabled,
-                      title: const Text("Persistent protection"),
-                      secondary: const Icon(
-                        Icons.file_present_outlined,
-                      ),
-                    ),
-                    CheckboxListTile(
-                      onChanged: (value) => _bloc.setWatermarkEnable(value!),
-                      activeColor: Theme.of(context).colorScheme.primary,
-                      selected: state.securitySettings.watermarkEnabled,
-                      value: state.securitySettings.watermarkEnabled,
-                      title: const Text("Enable watermarks"),
-                      secondary: const Icon(
-                        Icons.water_drop_outlined,
-                      ),
-                    ),
-                    ListTile(
-                      onTap: _showDatePicker,
-                      leading: const Icon(
-                        Icons.calendar_month,
-                      ),
-                      trailing: Text(
-                        state.securitySettings.expirationDate == null
-                            ? ""
-                            : DateFormat.yMMMd().format(
-                                state.securitySettings.expirationDate!,
-                              ),
-                        style: const TextStyle(fontSize: 15),
-                      ),
-                      title: Text(
-                        state.securitySettings.expirationDate == null
-                            ? "Expiration"
-                            : "Expires on",
-                      ),
-                      selectedColor: Theme.of(context).colorScheme.primary,
-                      selected: state.securitySettings.expirationDate != null,
-                    ),
-                  ],
-                ),
-                const Divider(),
-                CheckboxListTile(
-                    activeColor: Theme.of(context).colorScheme.primary,
-                    selected: state.encryptToRca,
-                    secondary: const Icon(
-                      Icons.link_outlined,
-                    ),
-                    title: const Text("Result as RCA Link"),
-                    value: state.encryptToRca,
-                    onChanged: (value) => _bloc.setRcaLinkAsResult(value!)),
-                Padding(
-                  padding: const EdgeInsets.only(bottom: 24),
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      Padding(
-                        padding: const EdgeInsets.only(right: 24.0),
-                        child: OutlinedButton.icon(
-                            onPressed: _shareWith,
-                            icon: const Icon(Icons.add_reaction_outlined),
-                            label: const Text("Share with")),
-                      ),
-                      OutlinedButton.icon(
-                          onPressed: _validateAndEncrypt,
-                          icon: const Icon(Icons.lock_outline),
-                          label: const Text("Encrypt")),
-                    ],
-                  ),
-                ),
-              ],
-            ),
+            child: _buildWidget(state),
           );
         },
       ),
+    );
+  }
+
+  Widget _buildWidget(EncryptState state) {
+    if (state.encryptedFile != null) {
+      return _EncryptFileResult(
+        encryptedFileName: basename(state.encryptedFile!.path),
+        clear: _clear,
+        shareFile: _saveOrShareFile,
+      );
+    } else if (state.rcaLink != null) {
+      return _EncryptRCALinkResult(
+          rcaLink: state.rcaLink!,
+          copyToClipboard: _copyRcaToClipboard,
+          clear: _clear,
+          shareLink: _shareLink);
+    }
+    return Column(
+      children: [
+        state.inputFile == null
+            ? _EncryptText(
+                encryptFormKey: _encryptFormKey,
+                messageTextController: _messageTextController,
+                addFile: _addFile,
+              )
+            : _EncryptFile(
+                filename: basename(state.inputFile!.path),
+                removeInputFile: _bloc.removeInputFile,
+              ),
+        state.shareWith.isNotEmpty
+            ? _EncryptShareWith(
+                shareWith: state.shareWith,
+                removeUser: _bloc.removeUser,
+              )
+            : Container(),
+        const Divider(),
+        _EncryptSecuritySettings(
+            settings: state.securitySettings, showDatePicker: _showDatePicker),
+        const Divider(),
+        SwitchListTile(
+            activeColor: Theme.of(context).colorScheme.primary,
+            selected: state.encryptToRca,
+            secondary: const Icon(
+              Icons.link_outlined,
+            ),
+            title: const Text("Result as RCA Link"),
+            value: state.encryptToRca,
+            onChanged: _bloc.setRcaLinkAsResult),
+        const SizedBox(height: 8),
+        Row(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            OutlinedButton.icon(
+                onPressed: _shareWith,
+                icon: const Icon(Icons.add_reaction_outlined),
+                label: const Text("Share with")),
+            const SizedBox(width: 24),
+            OutlinedButton.icon(
+                onPressed: _validateAndEncrypt,
+                icon: const Icon(Icons.lock_outline),
+                label: const Text("Encrypt")),
+          ],
+        ),
+        const SizedBox(height: 24),
+      ],
     );
   }
 
@@ -258,7 +178,17 @@ class _EncryptWidgetState extends State<EncryptWidget> {
     }
   }
 
-  void _shareFile(File encryptedFile) async {
+  _saveOrShareFile() async {
+    final encryptedFile = _bloc.state.encryptedFile!;
+    if (isDesktop()) {
+      final selectedFilePath = await FilePicker.platform.saveFile(
+        fileName: basename(encryptedFile.path),
+      );
+      if (selectedFilePath != null) {
+        await encryptedFile.copy(selectedFilePath);
+      }
+      return;
+    }
     await Share.shareXFiles(
       [
         XFile(
@@ -267,12 +197,12 @@ class _EncryptWidgetState extends State<EncryptWidget> {
         )
       ],
     );
-    _clear();
   }
 
-  void _shareLink(String rcaLink) async {
-    await Share.share(rcaLink, subject: "Virtru RCA Link");
-    _clear();
+  void _shareLink(Rect? bounds) async {
+    final rcaLink = _bloc.state.rcaLink!;
+    await Share.share(rcaLink,
+        subject: "Virtru RCA Link", sharePositionOrigin: bounds);
   }
 
   _clear() {
@@ -290,10 +220,10 @@ class _EncryptWidgetState extends State<EncryptWidget> {
   }
 
   _showDatePicker() async {
+    final expirationDate = _bloc.state.securitySettings.expirationDate;
     final result = await showDatePicker(
       context: context,
-      initialDate:
-          _bloc.state.securitySettings.expirationDate ?? DateTime.now(),
+      initialDate: expirationDate ?? DateTime.now(),
       firstDate: DateTime.now(),
       lastDate: DateTime.now().add(const Duration(days: 365)),
       helpText: "Select expiration date",
@@ -312,5 +242,309 @@ class _EncryptWidgetState extends State<EncryptWidget> {
     _bloc.setInputFile(inputFile);
   }
 
+  void _copyRcaToClipboard() async {
+    final rcaLink = _bloc.state.rcaLink!;
+    await Clipboard.setData(ClipboardData(text: rcaLink));
+    _showClipboardSnackBar();
+  }
+
+  void _showClipboardSnackBar() {
+    var snackBar = const SnackBar(
+      content: Text(
+        "Copied to clipboard",
+      ),
+    );
+    ScaffoldMessenger.of(context).showSnackBar(snackBar);
+  }
+
   EncryptCubit get _bloc => BlocProvider.of<EncryptCubit>(context);
+}
+
+class _EncryptText extends StatelessWidget {
+  final GlobalKey<FormState> _encryptFormKey;
+  final TextEditingController _messageTextController;
+  final void Function() _addFile;
+
+  const _EncryptText(
+      {required dynamic encryptFormKey,
+      required dynamic messageTextController,
+      required void Function() addFile})
+      : _addFile = addFile,
+        _messageTextController = messageTextController,
+        _encryptFormKey = encryptFormKey;
+
+  @override
+  Widget build(BuildContext context) {
+    return Column(
+      children: [
+        const SizedBox(height: 24),
+        Form(
+          key: _encryptFormKey,
+          child: Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 24),
+            child: TextFormField(
+              textInputAction: TextInputAction.newline,
+              controller: _messageTextController,
+              textCapitalization: TextCapitalization.sentences,
+              minLines: 5,
+              maxLines: 15,
+              validator: (value) {
+                if (value == null || value.isEmpty) {
+                  return 'You need some text to encrypt';
+                }
+                return null;
+              },
+              decoration: const InputDecoration(
+                labelText: 'Message to encrypt',
+                border: OutlineInputBorder(),
+              ),
+            ),
+          ),
+        ),
+        const SizedBox(height: 8),
+        const Text("OR"),
+        const SizedBox(height: 8),
+        OutlinedButton.icon(
+            onPressed: _addFile,
+            icon: const Icon(Icons.file_open_outlined),
+            label: const Text("Select file")),
+        const SizedBox(height: 8),
+      ],
+    );
+  }
+}
+
+class _EncryptFile extends StatelessWidget {
+  final String _filename;
+  final void Function() _removeInputFile;
+
+  const _EncryptFile(
+      {required String filename, required void Function() removeInputFile})
+      : _removeInputFile = removeInputFile,
+        _filename = filename;
+
+  @override
+  Widget build(BuildContext context) {
+    return Column(
+      children: [
+        const SizedBox(height: 24),
+        const Text("File to encrypt:"),
+        const SizedBox(height: 8),
+        Chip(
+          avatar: const Icon(Icons.file_present_outlined),
+          label: Text(_filename, overflow: TextOverflow.ellipsis),
+          onDeleted: _removeInputFile,
+        ),
+      ],
+    );
+  }
+}
+
+class _EncryptShareWith extends StatelessWidget {
+  final List<String> _shareWith;
+  final void Function(String user) _removeUser;
+
+  const _EncryptShareWith(
+      {required List<String> shareWith,
+      required void Function(String) removeUser})
+      : _removeUser = removeUser,
+        _shareWith = shareWith;
+
+  @override
+  Widget build(BuildContext context) {
+    return Column(
+      children: [
+        const Divider(),
+        const SizedBox(height: 8),
+        const Text("Shared with:"),
+        const SizedBox(height: 8),
+        Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 16),
+          child: Wrap(
+            alignment: WrapAlignment.center,
+            spacing: 8,
+            children: _shareWith
+                .map(
+                  (user) => Chip(
+                    avatar: const Icon(Icons.supervised_user_circle_outlined),
+                    label: Text(user, overflow: TextOverflow.ellipsis),
+                    onDeleted: () => _removeUser(user),
+                  ),
+                )
+                .toList(),
+          ),
+        ),
+      ],
+    );
+  }
+}
+
+class _EncryptSecuritySettings extends StatelessWidget {
+  final SecuritySettings _settings;
+  final void Function() _showDatePicker;
+
+  const _EncryptSecuritySettings(
+      {required SecuritySettings settings,
+      required void Function() showDatePicker})
+      : _showDatePicker = showDatePicker,
+        _settings = settings;
+
+  @override
+  Widget build(BuildContext context) {
+    final bloc = BlocProvider.of<EncryptCubit>(context);
+    return Column(
+      children: [
+        const SizedBox(height: 8),
+        const Text("Security settings:"),
+        const SizedBox(height: 8),
+        SwitchListTile(
+          onChanged: bloc.setPersistentProtection,
+          activeColor: Theme.of(context).colorScheme.primary,
+          selected: _settings.persistentProtectionEnabled,
+          value: _settings.persistentProtectionEnabled,
+          title: const Text("Persistent protection"),
+          secondary: const Icon(
+            Icons.file_present_outlined,
+          ),
+        ),
+        SwitchListTile(
+          onChanged: bloc.setWatermarkEnable,
+          activeColor: Theme.of(context).colorScheme.primary,
+          selected: _settings.watermarkEnabled,
+          value: _settings.watermarkEnabled,
+          title: const Text("Enable watermarks"),
+          secondary: const Icon(
+            Icons.water_drop_outlined,
+          ),
+        ),
+        ListTile(
+          onTap: _showDatePicker,
+          leading: const Icon(
+            Icons.calendar_month,
+          ),
+          trailing: Text(
+            _settings.expirationDate == null
+                ? ""
+                : DateFormat.yMMMd().format(
+                    _settings.expirationDate!,
+                  ),
+            style: const TextStyle(fontSize: 15),
+          ),
+          title: Text(
+            _settings.expirationDate == null ? "Expiration" : "Expires on",
+          ),
+          selectedColor: Theme.of(context).colorScheme.primary,
+          selected: _settings.expirationDate != null,
+        ),
+      ],
+    );
+  }
+}
+
+class _EncryptFileResult extends StatelessWidget {
+  final String _encryptedFileName;
+  final void Function() _clear;
+  final void Function() _shareFile;
+
+  const _EncryptFileResult(
+      {required String encryptedFileName,
+      required void Function() clear,
+      required void Function() shareFile})
+      : _shareFile = shareFile,
+        _clear = clear,
+        _encryptedFileName = encryptedFileName;
+
+  @override
+  Widget build(BuildContext context) {
+    return Column(
+      children: [
+        const SizedBox(height: 24),
+        const Text("Encrypted file:"),
+        const SizedBox(height: 8),
+        Chip(
+          avatar: const Icon(Icons.file_present_outlined),
+          label: Text(_encryptedFileName, overflow: TextOverflow.ellipsis),
+        ),
+        const SizedBox(height: 16),
+        Row(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            OutlinedButton.icon(
+                onPressed: _clear,
+                icon: const Icon(Icons.lock_outline),
+                label: const Text("Encrypt more")),
+            const SizedBox(width: 24),
+            OutlinedButton.icon(
+                onPressed: _shareFile,
+                icon: Icon(
+                    isDesktop() ? Icons.save_outlined : Icons.share_outlined),
+                label: Text(isDesktop() ? "Save file" : "Share file")),
+          ],
+        ),
+        const SizedBox(height: 24),
+      ],
+    );
+  }
+}
+
+class _EncryptRCALinkResult extends StatelessWidget {
+  final String _rcaLink;
+  final void Function() _clear;
+  final void Function() _copyToClipboard;
+  final void Function(Rect? bounds) _shareLink;
+
+  const _EncryptRCALinkResult(
+      {required String rcaLink,
+      required void Function() clear,
+      required void Function(Rect? bounds) shareLink,
+      required void Function() copyToClipboard})
+      : _copyToClipboard = copyToClipboard,
+        _shareLink = shareLink,
+        _clear = clear,
+        _rcaLink = rcaLink;
+
+  @override
+  Widget build(BuildContext context) {
+    return Column(
+      children: [
+        const SizedBox(height: 24),
+        const Text("RCA Link:"),
+        const SizedBox(height: 8),
+        Row(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            const SizedBox(width: 24),
+            Expanded(
+              child: Chip(
+                  label: Text(_rcaLink, overflow: TextOverflow.ellipsis),
+                  avatar: const Icon(Icons.link_outlined)),
+            ),
+            IconButton(
+              tooltip: "Copy",
+              onPressed: _copyToClipboard,
+              icon: const Icon(Icons.copy_outlined),
+            ),
+            const SizedBox(width: 24),
+          ],
+        ),
+        const SizedBox(height: 16),
+        Row(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            OutlinedButton.icon(
+                onPressed: _clear,
+                icon: const Icon(Icons.lock_outline),
+                label: const Text("Encrypt more")),
+            const SizedBox(width: 24),
+            OutlinedButton.icon(
+              onPressed: () => _shareLink(context.globalPaintBounds),
+              icon: const Icon(Icons.share_outlined),
+              label: const Text("Share link"),
+            ),
+          ],
+        ),
+        const SizedBox(height: 24),
+      ],
+    );
+  }
 }

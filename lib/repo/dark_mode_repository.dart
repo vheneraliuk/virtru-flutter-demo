@@ -4,21 +4,21 @@ import 'package:flutter/scheduler.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 class DarkModeRepository {
-  static const darkModeKey = 'dark_mode';
+  static const _darkModeKey = 'dark_mode';
 
   Future<bool> isDarkMode() async {
     var prefs = await SharedPreferences.getInstance();
-    var darkMode = prefs.getBool(darkModeKey) ??
+    var darkMode = prefs.getBool(_darkModeKey) ??
         SchedulerBinding.instance.platformDispatcher.platformBrightness ==
             Brightness.dark;
     return darkMode;
   }
 
   Future<bool> toggleDarkMode() async {
-    var currentBrightness = await isDarkMode();
+    var currentMode = await isDarkMode();
     var prefs = await SharedPreferences.getInstance();
-    var newValue = !currentBrightness;
-    prefs.setBool(darkModeKey, newValue);
+    var newValue = !currentMode;
+    prefs.setBool(_darkModeKey, newValue);
     return newValue;
   }
 }

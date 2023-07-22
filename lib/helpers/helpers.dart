@@ -1,3 +1,6 @@
+import 'dart:io';
+
+import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 
 final policyIdRegExp = RegExp(
@@ -19,7 +22,7 @@ final urlRegExp = RegExp(
 const tdfHtmlExt = ".tdf.html";
 const tdfExt = ".tdf";
 
-const oneHundredMb = 1024*1024*100;
+const oneHundredMb = 1024 * 1024 * 100;
 
 String getDateString(DateTime dateSent) {
   final now = DateTime.now().toUtc();
@@ -48,4 +51,19 @@ String getDateTimeString(DateTime dateSent) {
 String getRecipientsText(List<String> to) {
   if (to.isEmpty) return '(No Recipients)';
   return '${to.first}${to.length > 1 ? ' (+${to.length - 1})' : ''}';
+}
+
+bool isDesktop() => Platform.isLinux || Platform.isMacOS || Platform.isWindows;
+
+extension GlobalPaintBounds on BuildContext {
+  Rect? get globalPaintBounds {
+    final renderObject = findRenderObject();
+    final translation = renderObject?.getTransformTo(null).getTranslation();
+    if (translation != null && renderObject?.paintBounds != null) {
+      final offset = Offset(translation.x, translation.y);
+      return renderObject!.paintBounds.shift(offset);
+    } else {
+      return null;
+    }
+  }
 }
