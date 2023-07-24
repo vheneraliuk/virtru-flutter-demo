@@ -1,12 +1,21 @@
-steps:
-- name: Build Android APK
-- uses: actions/checkout@v3
-- uses: actions/setup-java@v2
-  with:
-    distribution: 'zulu'
-    java-version: '11'
-- uses: subosito/flutter-action@v2
-  with:
-    flutter-version: '3.7.7'
-- run: flutter pub get
-- run: flutter build apk
+name: Build Android APK
+
+on:
+  pull_request:
+    branches: [ "main" ]
+
+jobs:
+  build:
+    runs-on: ubuntu-lateststeps
+    steps:
+    - name: Build Android APK
+    - uses: actions/checkout@v3
+    - uses: actions/setup-java@v2
+      with:
+        distribution: 'zulu'
+        java-version: '11'
+    - uses: subosito/flutter-action@v2
+      with:
+        channel: 'stable'
+    - run: flutter pub get
+    - run: flutter build apk
