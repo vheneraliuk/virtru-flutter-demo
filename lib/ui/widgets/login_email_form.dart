@@ -54,7 +54,6 @@ class _LoginEmailFormState extends State<LoginEmailForm> {
                   decoration: const InputDecoration(
                     helperText: 'Email to send code to',
                     labelText: 'Email',
-                    // prefix: Text('V-'),
                     border: OutlineInputBorder(),
                   ),
                 ),
@@ -62,12 +61,10 @@ class _LoginEmailFormState extends State<LoginEmailForm> {
               Row(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
-                  Padding(
-                    padding: const EdgeInsets.only(right: 24.0),
-                    child: OutlinedButton(
-                        onPressed: _activateWithAppId,
-                        child: const Text("Activate with AppId")),
-                  ),
+                  OutlinedButton(
+                      onPressed: _activateWithAppId,
+                      child: const Text("Activate with AppId")),
+                  const SizedBox(width: 24),
                   OutlinedButton(
                       onPressed:
                       (!kIsWeb ? _validateAndRequestCode : null),

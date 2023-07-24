@@ -1,4 +1,6 @@
+import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
+import 'package:url_launcher/url_launcher.dart';
 import 'package:virtru_demo_flutter/bloc/bloc.dart';
 import 'package:virtru_demo_flutter/helpers/helpers.dart';
 
@@ -15,6 +17,8 @@ class _AppIdActivationDialogState extends State<AppIdActivationDialog> {
   final _emailTextController = TextEditingController();
   final _appIdTextController = TextEditingController();
   final _emailFormKey = GlobalKey<FormState>();
+  final _dashboardUrl =
+      Uri.parse("https://secure.virtru.com/dashboard-v2/settings");
 
   @override
   void dispose() {
@@ -31,42 +35,86 @@ class _AppIdActivationDialogState extends State<AppIdActivationDialog> {
         child: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
-            Padding(
-              padding: const EdgeInsets.all(8.0),
-              child: TextFormField(
-                controller: _emailTextController,
-                autofocus: true,
-                validator: (value) {
-                  if (value == null || value.isEmpty) {
-                    return 'Please enter email';
-                  } else if (!emailRegExp.hasMatch(value)) {
-                    return 'Please enter valid email';
-                  }
-                  return null;
-                },
-                decoration: const InputDecoration(
-                  labelText: 'Email',
-                  border: OutlineInputBorder(),
-                ),
+            const SizedBox(height: 8),
+            RichText(
+                textAlign: TextAlign.start,
+                text: TextSpan(children: [
+                  TextSpan(
+                      text: "You can generate AppId on your ",
+                      style: TextStyle(
+                          color: Theme.of(context)
+                              .colorScheme
+                              .onPrimaryContainer)),
+                  TextSpan(
+                    text: "Virtru Dashboard",
+                    style: const TextStyle(
+                        color: Colors.blue,
+                        decoration: TextDecoration.underline),
+                    recognizer: TapGestureRecognizer()
+                      ..onTap = () async {
+                        if (!await launchUrl(_dashboardUrl,
+                            mode: LaunchMode.externalApplication)) {
+                          debugPrint("Can't launch Dashboard url");
+                        }
+                      },
+                  ),
+                  TextSpan(
+                      text: " settings page.\nGo to ",
+                      style: TextStyle(
+                          color: Theme.of(context)
+                              .colorScheme
+                              .onPrimaryContainer)),
+                  TextSpan(
+                      text: "Developers",
+                      style: TextStyle(
+                          color:
+                              Theme.of(context).colorScheme.onPrimaryContainer,
+                          fontWeight: FontWeight.bold)),
+                  TextSpan(
+                      text: " tab and switch on ",
+                      style: TextStyle(
+                          color: Theme.of(context)
+                              .colorScheme
+                              .onPrimaryContainer)),
+                  TextSpan(
+                      text: "Developer Mode",
+                      style: TextStyle(
+                          color:
+                              Theme.of(context).colorScheme.onPrimaryContainer,
+                          fontWeight: FontWeight.bold)),
+                ])),
+            const SizedBox(height: 16),
+            TextFormField(
+              controller: _emailTextController,
+              autofocus: true,
+              validator: (value) {
+                if (value == null || value.isEmpty) {
+                  return 'Please enter email';
+                } else if (!emailRegExp.hasMatch(value)) {
+                  return 'Please enter valid email';
+                }
+                return null;
+              },
+              decoration: const InputDecoration(
+                labelText: 'Email',
+                border: OutlineInputBorder(),
               ),
             ),
-            Padding(
-              padding: const EdgeInsets.all(8.0),
-              child: TextFormField(
-                controller: _appIdTextController,
-                autofocus: true,
-                validator: (value) {
-                  if (value == null || value.isEmpty) {
-                    return 'Please enter AppId';
-                  } else if (!appIdRegExp.hasMatch(value)) {
-                    return 'Please enter valid AppId';
-                  }
-                  return null;
-                },
-                decoration: const InputDecoration(
-                  labelText: 'AppId',
-                  border: OutlineInputBorder(),
-                ),
+            const SizedBox(height: 16),
+            TextFormField(
+              controller: _appIdTextController,
+              autofocus: true,
+              validator: (value) {
+                if (value == null || value.isEmpty) {
+                  return 'Please enter AppId';
+                } else if (!appIdRegExp.hasMatch(value)) {
+                  return 'Please enter valid AppId';
+                }
+                return null;
+              },
+              decoration: const InputDecoration(
+                labelText: 'AppId',
+                border: OutlineInputBorder(),
               ),
             ),
           ],

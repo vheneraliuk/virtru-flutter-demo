@@ -37,6 +37,11 @@ class DecryptState extends Equatable {
   }
 
   @override
-  List<Object?> get props =>
-      [loading, inputFile, decryptedString, decryptedFile, error];
+  List<Object?> get props => [
+        loading,
+        inputFile,
+        decryptedString,
+        decryptedFile,
+        error,
+      ];
 }

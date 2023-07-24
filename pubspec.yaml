@@ -1,5 +1,5 @@
 name: virtru_demo_flutter
-description: Virtru Flutter (Demo)
+description: Virtru Flutter
 # The following line prevents the package from being accidentally published to
 # pub.dev using `flutter pub publish`. This is preferred for private packages.
 publish_to: 'none' # Remove this line if you wish to publish to pub.dev
@@ -63,6 +63,7 @@ dependencies:
   mime: ^1.0.4
   path: ^1.8.3
   file_picker: ^5.3.2
+  url_launcher: ^6.1.12
 
 dev_dependencies:
   flutter_test:

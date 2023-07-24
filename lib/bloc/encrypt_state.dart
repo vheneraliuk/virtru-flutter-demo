@@ -67,6 +67,7 @@ class EncryptState extends Equatable {
         encryptToRca,
         inputFile,
         encryptedFile,
+        rcaLink,
         error,
       ];
 }

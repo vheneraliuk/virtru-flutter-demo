@@ -60,14 +60,12 @@ class _LoginCodeFormState extends State<LoginCodeForm> {
               Row(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
-                  Padding(
-                    padding: const EdgeInsets.only(right: 24.0),
-                    child: OutlinedButton.icon(
-                        onPressed: () => BlocProvider.of<LoginCubit>(context)
-                            .backToSendCode(),
-                        icon: const Icon(Icons.arrow_back_outlined),
-                        label: const Text("Back")),
-                  ),
+                  OutlinedButton.icon(
+                      onPressed: () => BlocProvider.of<LoginCubit>(context)
+                          .backToSendCode(),
+                      icon: const Icon(Icons.arrow_back_outlined),
+                      label: const Text("Back")),
+                  const SizedBox(width: 24),
                   OutlinedButton(
                       onPressed: _validateAndSendCode,
                       child: const Text("Activate")),

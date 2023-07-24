@@ -5,11 +5,11 @@ import 'package:virtru_demo_flutter/repo/repo.dart';
 import 'package:virtru_demo_flutter/ui/ui.dart';
 
 void main() {
-  runApp(const MyApp());
+  runApp(const VirtruApp());
 }
 
-class MyApp extends StatelessWidget {
-  const MyApp({super.key});
+class VirtruApp extends StatelessWidget {
+  const VirtruApp({super.key});
 
   // This widget is the root of your application.
   @override
