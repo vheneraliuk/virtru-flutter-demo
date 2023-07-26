@@ -5,8 +5,8 @@ class EncryptState extends Equatable {
   final bool loading;
   final bool encryptToRca;
   final SecuritySettings securitySettings;
-  final File? inputFile;
-  final File? encryptedFile;
+  final XFile? inputFile;
+  final XFile? encryptedFile;
   final String? rcaLink;
   final VirtruError? error;
 
@@ -34,8 +34,8 @@ class EncryptState extends Equatable {
     SecuritySettings? securitySettings,
     bool loading = false,
     bool? encryptToRca,
-    File? inputFile,
-    File? encryptedFile,
+    XFile? inputFile,
+    XFile? encryptedFile,
     String? rcaLink,
     VirtruError? error,
     bool removeInputFile = false,

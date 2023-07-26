@@ -1,10 +1,7 @@
-import 'dart:io';
-
 import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:path/path.dart' show basename;
 import 'package:share_plus/share_plus.dart';
 import 'package:virtru_demo_flutter/bloc/bloc.dart';
 import 'package:virtru_demo_flutter/helpers/helpers.dart';
@@ -79,7 +76,7 @@ class _DecryptWidgetState extends State<DecryptWidget> {
       );
     } else if (state.decryptedFile != null) {
       return _DecryptFileResult(
-        decryptedFileName: basename(state.decryptedFile!.path),
+        decryptedFileName: state.decryptedFile!.name,
         clear: _clear,
         shareFile: _saveOrShareFile,
       );
@@ -93,7 +90,7 @@ class _DecryptWidgetState extends State<DecryptWidget> {
                 addFile: _addFile,
               )
             : _DecryptFile(
-                filename: basename(state.inputFile!.path),
+                filename: state.inputFile!.name,
                 removeInputFile: _bloc.removeInputFile),
         const Divider(),
         const SizedBox(height: 8),
@@ -144,20 +141,15 @@ class _DecryptWidgetState extends State<DecryptWidget> {
     final decryptedFile = _bloc.state.decryptedFile!;
     if (isDesktop()) {
       final selectedFilePath = await FilePicker.platform.saveFile(
-        fileName: basename(decryptedFile.path),
+        fileName: decryptedFile.name,
       );
       if (selectedFilePath != null) {
-        await decryptedFile.copy(selectedFilePath);
+        await decryptedFile.saveTo(selectedFilePath);
       }
       return;
     }
     await Share.shareXFiles(
-      [
-        XFile(
-          decryptedFile.path,
-          mimeType: ContentType.html.mimeType,
-        )
-      ],
+      [decryptedFile],
     );
   }
 
@@ -170,8 +162,7 @@ class _DecryptWidgetState extends State<DecryptWidget> {
     FilePickerResult? result = await FilePicker.platform.pickFiles();
 
     if (result == null) return;
-    final inputFile = File(result.files.single.path!);
-    _bloc.setInputFile(inputFile);
+    _bloc.setInputFile(result.files.first.toXFile());
   }
 
   void _shareStringResult(Rect? bounds) async {

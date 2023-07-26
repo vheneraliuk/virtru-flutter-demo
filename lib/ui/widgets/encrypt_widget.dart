@@ -1,11 +1,8 @@
-import 'dart:io';
-
 import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:intl/intl.dart';
-import 'package:path/path.dart' show basename;
 import 'package:share_plus/share_plus.dart';
 import 'package:virtru_demo_flutter/bloc/bloc.dart';
 import 'package:virtru_demo_flutter/helpers/helpers.dart';
@@ -75,7 +72,7 @@ class _EncryptWidgetState extends State<EncryptWidget> {
   Widget _buildWidget(EncryptState state) {
     if (state.encryptedFile != null) {
       return _EncryptFileResult(
-        encryptedFileName: basename(state.encryptedFile!.path),
+        encryptedFileName: state.encryptedFile!.name,
         clear: _clear,
         shareFile: _saveOrShareFile,
       );
@@ -95,7 +92,7 @@ class _EncryptWidgetState extends State<EncryptWidget> {
                 addFile: _addFile,
               )
             : _EncryptFile(
-                filename: basename(state.inputFile!.path),
+                filename: state.inputFile!.name,
                 removeInputFile: _bloc.removeInputFile,
               ),
         state.shareWith.isNotEmpty
@@ -182,20 +179,15 @@ class _EncryptWidgetState extends State<EncryptWidget> {
     final encryptedFile = _bloc.state.encryptedFile!;
     if (isDesktop()) {
       final selectedFilePath = await FilePicker.platform.saveFile(
-        fileName: basename(encryptedFile.path),
+        fileName: encryptedFile.name,
       );
       if (selectedFilePath != null) {
-        await encryptedFile.copy(selectedFilePath);
+        await encryptedFile.saveTo(selectedFilePath);
       }
       return;
     }
     await Share.shareXFiles(
-      [
-        XFile(
-          encryptedFile.path,
-          mimeType: ContentType.html.mimeType,
-        )
-      ],
+      [encryptedFile],
     );
   }
 
@@ -238,8 +230,7 @@ class _EncryptWidgetState extends State<EncryptWidget> {
     FilePickerResult? result = await FilePicker.platform.pickFiles();
 
     if (result == null) return;
-    final inputFile = File(result.files.single.path!);
-    _bloc.setInputFile(inputFile);
+    _bloc.setInputFile(result.files.first.toXFile());
   }
 
   void _copyRcaToClipboard() async {
@@ -536,10 +527,14 @@ class _EncryptRCALinkResult extends StatelessWidget {
                 icon: const Icon(Icons.lock_outline),
                 label: const Text("Encrypt more")),
             const SizedBox(width: 24),
-            OutlinedButton.icon(
-              onPressed: () => _shareLink(context.globalPaintBounds),
-              icon: const Icon(Icons.share_outlined),
-              label: const Text("Share link"),
+            Builder(
+              builder: (context) {
+                return OutlinedButton.icon(
+                  onPressed: () => _shareLink(context.globalPaintBounds),
+                  icon: const Icon(Icons.share_outlined),
+                  label: const Text("Share link"),
+                );
+              }
             ),
           ],
         ),

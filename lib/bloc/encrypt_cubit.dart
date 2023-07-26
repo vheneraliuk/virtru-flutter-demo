@@ -1,11 +1,11 @@
+import 'dart:convert';
 import 'dart:io';
 
 import 'package:bloc/bloc.dart';
+import 'package:cross_file/cross_file.dart';
 import 'package:equatable/equatable.dart';
-import 'package:flutter/cupertino.dart';
+import 'package:flutter/foundation.dart';
 import 'package:mime/mime.dart';
-import 'package:path/path.dart';
-import 'package:path_provider/path_provider.dart';
 import 'package:virtru_demo_flutter/helpers/helpers.dart';
 import 'package:virtru_demo_flutter/model/model.dart';
 import 'package:virtru_demo_flutter/repo/repo.dart';
@@ -74,8 +74,8 @@ class EncryptCubit extends Cubit<EncryptState> {
       return;
     }
     try {
-      final inputFileName = basename(inputFile.path);
-      final encryptParams = virtru.EncryptFileParams.fromFile(inputFile)
+      final inputFileName = inputFile.name;
+      final encryptParams = virtru.EncryptFileToRcaParams(inputFile)
         ..setDisplayName(inputFileName)
         ..setDisplayMessage("This file was encrypted with Flutter App")
         ..shareWithUsers(state.shareWith);
@@ -117,18 +117,21 @@ class EncryptCubit extends Cubit<EncryptState> {
     emit(state.copyWith(removeInputFile: true));
   }
 
-  void setInputFile(File inputFile) async {
-    final inputFileName = basename(inputFile.path);
-    final tempInputFilePath =
-        "${(await getTemporaryDirectory()).path}/$inputFileName";
-    final tempInputFile = await inputFile.copy(tempInputFilePath);
-    emit(state.copyWith(inputFile: tempInputFile));
+  void setInputFile(XFile inputFile) async {
+    if (kIsWeb) {
+      emit(state.copyWith(inputFile: inputFile));
+    } else {
+      final inputFileName = inputFile.name;
+      final tempInputFilePath = await getTempFilePath(inputFileName);
+      await inputFile.saveTo(tempInputFilePath);
+      emit(state.copyWith(inputFile: XFile(tempInputFilePath)));
+    }
   }
 
-  _encryptFileToRca(File inputFile, virtru.Client client) async {
+  _encryptFileToRca(XFile inputFile, virtru.Client client) async {
     try {
-      final inputFileName = basename(inputFile.path);
-      final encryptParams = virtru.EncryptFileParams.fromFile(inputFile)
+      final inputFileName = inputFile.name;
+      final encryptParams = virtru.EncryptFileToRcaParams(inputFile)
         ..setPolicy(_createPolicy())
         ..setDisplayName(inputFileName)
         ..setDisplayMessage("This file was encrypted with Flutter App")
@@ -147,16 +150,16 @@ class EncryptCubit extends Cubit<EncryptState> {
     }
   }
 
-  _encryptFileToFile(File inputFile, virtru.Client client) async {
+  _encryptFileToFile(XFile inputFile, virtru.Client client) async {
     try {
       final fileSize = await inputFile.length();
-      final inputFileName = basename(inputFile.path);
+      final inputFileName = inputFile.name;
       final outputFile = switch (fileSize) {
-        < oneHundredMb => File("${inputFile.path}$tdfHtmlExt"),
-        _ => File("${inputFile.path}$tdfExt")
+        < oneHundredMb => XFile("${inputFile.path}$tdfHtmlExt"),
+        _ => XFile("${inputFile.path}$tdfExt")
       };
       final encryptParams =
-          virtru.EncryptFileParams.fromFiles(inputFile, outputFile)
+          virtru.EncryptFileToFileParams(inputFile, outputFile)
             ..setPolicy(_createPolicy())
             ..setDisplayName(inputFileName)
             ..setDisplayMessage("This file was encrypted with Flutter App")
@@ -168,8 +171,8 @@ class EncryptCubit extends Cubit<EncryptState> {
       if (fileSize >= oneHundredMb) {
         client.setZipProtocol(true);
       }
-      await client.encryptFile(encryptParams);
-      emit(state.copyWith(encryptedFile: outputFile));
+      final encryptedFile = await client.encryptFile(encryptParams);
+      emit(state.copyWith(encryptedFile: encryptedFile));
     } on virtru.NativeError catch (error) {
       _emitError(VirtruError(name: "Native error", message: error.message));
     } catch (error) {
@@ -182,12 +185,7 @@ class EncryptCubit extends Cubit<EncryptState> {
     try {
       final sourceFileName =
           "Flutter_Demo_${DateTime.now().millisecondsSinceEpoch}.txt";
-      final encryptParams = virtru.EncryptStringParams(message)
-        ..setPolicy(_createPolicy())
-        ..setDisplayName(sourceFileName)
-        ..setDisplayMessage("This message was encrypted with Flutter App")
-        ..setMimeType(ContentType.text.mimeType)
-        ..shareWithUsers(state.shareWith);
+      final encryptParams = _getEncryptStringParams(message, sourceFileName);
       final rcaLink = await client.encryptStringToRCA(encryptParams);
       emit(state.copyWith(rcaLink: rcaLink));
     } on virtru.NativeError catch (error) {
@@ -202,18 +200,15 @@ class EncryptCubit extends Cubit<EncryptState> {
     try {
       final sourceFileName =
           "Flutter_Demo_${DateTime.now().millisecondsSinceEpoch}.txt";
-      final encryptParams = virtru.EncryptStringParams(message)
-        ..setPolicy(_createPolicy())
-        ..setDisplayName(sourceFileName)
-        ..setDisplayMessage("This message was encrypted with Flutter App")
-        ..setMimeType(ContentType.text.mimeType)
-        ..shareWithUsers(state.shareWith);
+      final encryptParams = _getEncryptStringParams(message, sourceFileName);
       final encryptedString = await client.encryptString(encryptParams);
       final encryptedFileName = '$sourceFileName$tdfHtmlExt';
-      final tempEncryptedFilePath =
-          "${(await getTemporaryDirectory()).path}/$encryptedFileName";
-      final encryptedFile = File(tempEncryptedFilePath);
-      await encryptedFile.writeAsString(encryptedString);
+      final tempEncryptedFilePath = await getTempFilePath(encryptedFileName);
+      final encryptedFile = XFile.fromData(
+          Uint8List.fromList(utf8.encode(encryptedString)),
+          path: tempEncryptedFilePath,
+          name: encryptedFileName,
+          mimeType: ContentType.html.mimeType);
       emit(state.copyWith(encryptedFile: encryptedFile));
     } on virtru.NativeError catch (error) {
       _emitError(VirtruError(name: "Native error", message: error.message));
@@ -259,6 +254,16 @@ class EncryptCubit extends Cubit<EncryptState> {
       expirationDate: expirationDate,
       removeExpiration: expirationDate == null,
     )));
+  }
+
+  virtru.EncryptStringParams _getEncryptStringParams(
+      String message, String fileName) {
+    return virtru.EncryptStringParams(message)
+      ..setPolicy(_createPolicy())
+      ..setDisplayName(fileName)
+      ..setDisplayMessage("This message was encrypted with Flutter App")
+      ..setMimeType(ContentType.text.mimeType)
+      ..shareWithUsers(state.shareWith);
   }
 
   virtru.Policy _createPolicy() {

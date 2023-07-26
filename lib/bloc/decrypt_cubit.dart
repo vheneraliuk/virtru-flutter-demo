@@ -1,10 +1,8 @@
-import 'dart:io';
-
 import 'package:bloc/bloc.dart';
+import 'package:cross_file/cross_file.dart';
 import 'package:equatable/equatable.dart';
-import 'package:flutter/cupertino.dart';
+import 'package:flutter/foundation.dart';
 import 'package:path/path.dart';
-import 'package:path_provider/path_provider.dart';
 import 'package:virtru_demo_flutter/helpers/helpers.dart';
 import 'package:virtru_demo_flutter/model/model.dart';
 import 'package:virtru_demo_flutter/repo/repo.dart';
@@ -33,7 +31,7 @@ class DecryptCubit extends Cubit<DecryptState> {
       return;
     }
     try {
-      final inputFilePath = inputFile.path;
+      final inputFilePath = inputFile.name;
       final containsTdfInName = inputFilePath.contains(tdfExt);
       String outputFilePath;
       if (containsTdfInName) {
@@ -45,9 +43,9 @@ class DecryptCubit extends Cubit<DecryptState> {
         outputFilePath = inputFilePath.replaceAll(
             "$clearName$ext", "${clearName}_decrypted$ext");
       }
-      final outputFile = File(outputFilePath);
-      await client.decryptFile(inputFile, outputFile);
-      emit(state.copyWith(decryptedFile: outputFile));
+      final outputFile = XFile(outputFilePath);
+      final decryptedFile = await client.decryptFile(inputFile, outputFile);
+      emit(state.copyWith(decryptedFile: decryptedFile));
     } on virtru.NativeError catch (error) {
       _emitError(VirtruError(name: "Native error", message: error.message));
     } catch (error) {
@@ -98,18 +96,20 @@ class DecryptCubit extends Cubit<DecryptState> {
     emit(state.copyWith(removeInputFile: true));
   }
 
-  void setInputFile(File inputFile) async {
-    final inputFileName = basename(inputFile.path);
-    final tempInputFilePath =
-        "${(await getTemporaryDirectory()).path}/$inputFileName";
-    final tempInputFile = await inputFile.copy(tempInputFilePath);
-    emit(state.copyWith(inputFile: tempInputFile));
+  void setInputFile(XFile inputFile) async {
+    if (kIsWeb) {
+      emit(state.copyWith(inputFile: inputFile));
+    } else {
+      final inputFileName = inputFile.name;
+      final tempInputFilePath = await getTempFilePath(inputFileName);
+      await inputFile.saveTo(tempInputFilePath);
+      emit(state.copyWith(inputFile: XFile(tempInputFilePath)));
+    }
   }
 
   void _decryptRcaToString(String rcaLink, virtru.Client client) async {
     try {
       final result = await client.decryptRcaToString(rcaLink);
-      debugPrint("Result: '$result'");
       emit(state.copyWith(decryptedString: result));
     } on virtru.NativeError catch (error) {
       _emitError(VirtruError(name: "Native error", message: error.message));
@@ -122,10 +122,9 @@ class DecryptCubit extends Cubit<DecryptState> {
   void _decryptRcaToFile(
       String rcaLink, String fileName, virtru.Client client) async {
     try {
-      File outputFile =
-          File("${(await getTemporaryDirectory()).path}/$fileName");
-      await client.decryptRcaToFile(rcaLink, outputFile.path);
-      emit(state.copyWith(decryptedFile: outputFile));
+      final outputFile = XFile(await getTempFilePath(fileName));
+      final decryptedFile = await client.decryptRcaToFile(rcaLink, outputFile);
+      emit(state.copyWith(decryptedFile: decryptedFile));
     } on virtru.NativeError catch (error) {
       _emitError(VirtruError(name: "Native error", message: error.message));
     } catch (error) {

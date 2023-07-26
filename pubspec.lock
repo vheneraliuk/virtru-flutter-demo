@@ -178,7 +178,7 @@ packages:
     source: hosted
     version: "3.1.1"
   cross_file:
-    dependency: transitive
+    dependency: "direct main"
     description:
       name: cross_file
       sha256: "0b0036e8cccbfbe0555fd83c1d31a6f30b77a96b598b35a5d36dd41f718695e9"
@@ -978,7 +978,7 @@ packages:
     description:
       path: "."
       ref: main
-      resolved-ref: "356a60f804463248a75edc9ff563e775ed128506"
+      resolved-ref: "52a071ac21cf893c87121393ee011fc6f4cba5f9"
       url: "https://github.com/vheneraliuk/virtru-flutter-sdk.git"
     source: git
     version: "0.0.1"
@@ -1002,10 +1002,10 @@ packages:
     dependency: transitive
     description:
       name: win32
-      sha256: dfdf0136e0aa7a1b474ea133e67cb0154a0acd2599c4f3ada3b49d38d38793ee
+      sha256: f2add6fa510d3ae152903412227bda57d0d5a8da61d2c39c1fb022c9429a41c0
       url: "https://pub.dev"
     source: hosted
-    version: "5.0.5"
+    version: "5.0.6"
   xdg_directories:
     dependency: transitive
     description:

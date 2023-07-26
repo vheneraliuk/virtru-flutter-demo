@@ -2,8 +2,8 @@ part of 'decrypt_cubit.dart';
 
 class DecryptState extends Equatable {
   final bool loading;
-  final File? inputFile;
-  final File? decryptedFile;
+  final XFile? inputFile;
+  final XFile? decryptedFile;
   final String? decryptedString;
   final VirtruError? error;
 
@@ -21,8 +21,8 @@ class DecryptState extends Equatable {
 
   DecryptState copyWith({
     bool loading = false,
-    File? inputFile,
-    File? decryptedFile,
+    XFile? inputFile,
+    XFile? decryptedFile,
     String? decryptedString,
     VirtruError? error,
     bool removeInputFile = false,

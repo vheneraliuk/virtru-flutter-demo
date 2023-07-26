@@ -1,7 +1,11 @@
 import 'dart:io';
 
+import 'package:cross_file/cross_file.dart';
+import 'package:file_picker/file_picker.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
+import 'package:path_provider/path_provider.dart';
 
 final policyIdRegExp = RegExp(
   r'[a-hA-H0-9]{8}-[a-hA-H0-9]{4}-[a-hA-H0-9]{4}-[a-hA-H0-9]{4}-[a-hA-H0-9]{12}',
@@ -55,6 +59,14 @@ String getRecipientsText(List<String> to) {
 
 bool isDesktop() => Platform.isLinux || Platform.isMacOS || Platform.isWindows;
 
+Future<String> getTempFilePath(String fileName) async {
+  if (kIsWeb) {
+    return fileName;
+  } else {
+    return "${(await getTemporaryDirectory()).path}/$fileName";
+  }
+}
+
 extension GlobalPaintBounds on BuildContext {
   Rect? get globalPaintBounds {
     final renderObject = findRenderObject();
@@ -65,5 +77,26 @@ extension GlobalPaintBounds on BuildContext {
     } else {
       return null;
     }
+  }
+}
+
+extension Delete on XFile {
+  delete() async {
+    if (!kIsWeb) {
+      await File(path).delete();
+    }
+  }
+}
+
+extension ConverterPlatforFile on PlatformFile {
+  XFile toXFile() {
+    if (kIsWeb) {
+      return XFile.fromData(
+        bytes!,
+        name: name,
+        length: size,
+      );
+    }
+    return XFile(path!);
   }
 }
