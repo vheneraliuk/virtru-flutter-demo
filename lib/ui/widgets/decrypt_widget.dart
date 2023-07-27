@@ -137,7 +137,7 @@ class _DecryptWidgetState extends State<DecryptWidget> {
     }
   }
 
-  _saveOrShareFile() async {
+  _saveOrShareFile(Rect? shareBounds) async {
     final decryptedFile = _bloc.state.decryptedFile!;
     if (isDesktop()) {
       final selectedFilePath = await FilePicker.platform.saveFile(
@@ -150,6 +150,7 @@ class _DecryptWidgetState extends State<DecryptWidget> {
     }
     await Share.shareXFiles(
       [decryptedFile],
+      sharePositionOrigin: shareBounds,
     );
   }
 
@@ -165,9 +166,9 @@ class _DecryptWidgetState extends State<DecryptWidget> {
     _bloc.setInputFile(result.files.first.toXFile());
   }
 
-  void _shareStringResult(Rect? bounds) async {
+  void _shareStringResult(Rect? shareBounds) async {
     final decryptedString = _bloc.state.decryptedString!;
-    await Share.share(decryptedString, sharePositionOrigin: bounds);
+    await Share.share(decryptedString, sharePositionOrigin: shareBounds);
   }
 
   void _copyResultToClipboard() async {
@@ -270,13 +271,13 @@ class _DecryptFile extends StatelessWidget {
 class _DecryptStringResult extends StatelessWidget {
   final String _decryptedResult;
   final void Function() _clear;
-  final void Function(Rect? bounds) _shareText;
+  final void Function(Rect? shareBounds) _shareText;
   final void Function() _copyToClipboard;
 
   const _DecryptStringResult(
       {required String decryptedResult,
       required void Function() clear,
-      required void Function(Rect? bounds) shareText,
+      required void Function(Rect? shareBounds) shareText,
       required void Function() copyToClipboard})
       : _copyToClipboard = copyToClipboard,
         _shareText = shareText,
@@ -313,10 +314,12 @@ class _DecryptStringResult extends StatelessWidget {
                     icon: const Icon(Icons.lock_open_outlined),
                     label: const Text("Decrypt more")),
                 const SizedBox(width: 24),
-                OutlinedButton.icon(
-                    onPressed: () => _shareText(context.globalPaintBounds),
-                    icon: const Icon(Icons.share_outlined),
-                    label: const Text("Share text")),
+                Builder(builder: (context) {
+                  return OutlinedButton.icon(
+                      onPressed: () => _shareText(context.globalPaintBounds),
+                      icon: const Icon(Icons.share_outlined),
+                      label: const Text("Share text"));
+                }),
               ],
             ),
             const SizedBox(height: 24),
@@ -330,12 +333,12 @@ class _DecryptStringResult extends StatelessWidget {
 class _DecryptFileResult extends StatelessWidget {
   final String _decryptedFileName;
   final void Function() _clear;
-  final void Function() _shareFile;
+  final void Function(Rect? shareBounds) _shareFile;
 
   const _DecryptFileResult(
       {required String decryptedFileName,
       required void Function() clear,
-      required void Function() shareFile})
+      required void Function(Rect? shareBounds) shareFile})
       : _shareFile = shareFile,
         _clear = clear,
         _decryptedFileName = decryptedFileName;
@@ -360,11 +363,13 @@ class _DecryptFileResult extends StatelessWidget {
                 icon: const Icon(Icons.lock_open_outlined),
                 label: const Text("Decrypt more")),
             const SizedBox(width: 24),
-            OutlinedButton.icon(
-                onPressed: _shareFile,
-                icon: Icon(
-                    isDesktop() ? Icons.save_outlined : Icons.share_outlined),
-                label: Text(isDesktop() ? "Save file" : "Share file")),
+            Builder(builder: (context) {
+              return OutlinedButton.icon(
+                  onPressed: () => _shareFile(context.globalPaintBounds),
+                  icon: Icon(
+                      isDesktop() ? Icons.save_outlined : Icons.share_outlined),
+                  label: Text(isDesktop() ? "Save file" : "Share file"));
+            }),
           ],
         ),
         const SizedBox(height: 24),

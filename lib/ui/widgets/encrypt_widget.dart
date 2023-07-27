@@ -175,7 +175,7 @@ class _EncryptWidgetState extends State<EncryptWidget> {
     }
   }
 
-  _saveOrShareFile() async {
+  _saveOrShareFile(Rect? shareBounds) async {
     final encryptedFile = _bloc.state.encryptedFile!;
     if (isDesktop()) {
       final selectedFilePath = await FilePicker.platform.saveFile(
@@ -188,13 +188,13 @@ class _EncryptWidgetState extends State<EncryptWidget> {
     }
     await Share.shareXFiles(
       [encryptedFile],
+      sharePositionOrigin: shareBounds,
     );
   }
 
-  void _shareLink(Rect? bounds) async {
+  void _shareLink(Rect? shareBounds) async {
     final rcaLink = _bloc.state.rcaLink!;
-    await Share.share(rcaLink,
-        subject: "Virtru RCA Link", sharePositionOrigin: bounds);
+    await Share.share(rcaLink, sharePositionOrigin: shareBounds);
   }
 
   _clear() {
@@ -435,12 +435,12 @@ class _EncryptSecuritySettings extends StatelessWidget {
 class _EncryptFileResult extends StatelessWidget {
   final String _encryptedFileName;
   final void Function() _clear;
-  final void Function() _shareFile;
+  final void Function(Rect? shareBounds) _shareFile;
 
   const _EncryptFileResult(
       {required String encryptedFileName,
       required void Function() clear,
-      required void Function() shareFile})
+      required void Function(Rect? shareBounds) shareFile})
       : _shareFile = shareFile,
         _clear = clear,
         _encryptedFileName = encryptedFileName;
@@ -465,11 +465,13 @@ class _EncryptFileResult extends StatelessWidget {
                 icon: const Icon(Icons.lock_outline),
                 label: const Text("Encrypt more")),
             const SizedBox(width: 24),
-            OutlinedButton.icon(
-                onPressed: _shareFile,
-                icon: Icon(
-                    isDesktop() ? Icons.save_outlined : Icons.share_outlined),
-                label: Text(isDesktop() ? "Save file" : "Share file")),
+            Builder(builder: (context) {
+              return OutlinedButton.icon(
+                  onPressed: () => _shareFile(context.globalPaintBounds),
+                  icon: Icon(
+                      isDesktop() ? Icons.save_outlined : Icons.share_outlined),
+                  label: Text(isDesktop() ? "Save file" : "Share file"));
+            }),
           ],
         ),
         const SizedBox(height: 24),
@@ -482,12 +484,12 @@ class _EncryptRCALinkResult extends StatelessWidget {
   final String _rcaLink;
   final void Function() _clear;
   final void Function() _copyToClipboard;
-  final void Function(Rect? bounds) _shareLink;
+  final void Function(Rect? shareBounds) _shareLink;
 
   const _EncryptRCALinkResult(
       {required String rcaLink,
       required void Function() clear,
-      required void Function(Rect? bounds) shareLink,
+      required void Function(Rect? shareBounds) shareLink,
       required void Function() copyToClipboard})
       : _copyToClipboard = copyToClipboard,
         _shareLink = shareLink,
@@ -527,15 +529,13 @@ class _EncryptRCALinkResult extends StatelessWidget {
                 icon: const Icon(Icons.lock_outline),
                 label: const Text("Encrypt more")),
             const SizedBox(width: 24),
-            Builder(
-              builder: (context) {
-                return OutlinedButton.icon(
-                  onPressed: () => _shareLink(context.globalPaintBounds),
-                  icon: const Icon(Icons.share_outlined),
-                  label: const Text("Share link"),
-                );
-              }
-            ),
+            Builder(builder: (context) {
+              return OutlinedButton.icon(
+                onPressed: () => _shareLink(context.globalPaintBounds),
+                icon: const Icon(Icons.share_outlined),
+                label: const Text("Share link"),
+              );
+            }),
           ],
         ),
         const SizedBox(height: 24),

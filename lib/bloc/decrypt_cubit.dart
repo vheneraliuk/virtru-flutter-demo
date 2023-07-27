@@ -31,7 +31,7 @@ class DecryptCubit extends Cubit<DecryptState> {
       return;
     }
     try {
-      final inputFilePath = inputFile.name;
+      final inputFilePath = inputFile.path;
       final containsTdfInName = inputFilePath.contains(tdfExt);
       String outputFilePath;
       if (containsTdfInName) {

@@ -59,44 +59,6 @@ class EncryptCubit extends Cubit<EncryptState> {
     emit(state.copyWith(encryptToRca: enable));
   }
 
-  void encryptFileToRCA() async {
-    final inputFile = state.inputFile;
-    if (inputFile == null) {
-      _emitError(VirtruError(
-        name: "There is no input File",
-        message: "You need to select file to encrypt first",
-      ));
-      return;
-    }
-    emit(state.copyWith(loading: true));
-    final client = await _getClient();
-    if (client == null) {
-      return;
-    }
-    try {
-      final inputFileName = inputFile.name;
-      final encryptParams = virtru.EncryptFileToRcaParams(inputFile)
-        ..setDisplayName(inputFileName)
-        ..setDisplayMessage("This file was encrypted with Flutter App")
-        ..shareWithUsers(state.shareWith);
-      final mimeType = lookupMimeType(inputFile.path);
-      if (mimeType != null) {
-        encryptParams.setMimeType(mimeType);
-      }
-      final rcaLink = await client.encryptFileToRCA(encryptParams);
-      debugPrint("New RCA Link: '$rcaLink'");
-      emit(state.copyWith(loading: false));
-    } on virtru.NativeError catch (error) {
-      _emitError(VirtruError(name: "Native error", message: error.message));
-    } catch (error) {
-      _emitError(VirtruError(
-          name: "Unknown error", message: "Oops, something went wrong"));
-      rethrow;
-    }
-
-    client.dispose();
-  }
-
   void shareWithUser(String user) {
     if (state.shareWith.contains(user)) return;
     emit(state.copyWith(newShareWith: user));
@@ -209,6 +171,7 @@ class EncryptCubit extends Cubit<EncryptState> {
           path: tempEncryptedFilePath,
           name: encryptedFileName,
           mimeType: ContentType.html.mimeType);
+      await encryptedFile.saveTo(tempEncryptedFilePath);
       emit(state.copyWith(encryptedFile: encryptedFile));
     } on virtru.NativeError catch (error) {
       _emitError(VirtruError(name: "Native error", message: error.message));
