@@ -229,10 +229,10 @@ packages:
     dependency: transitive
     description:
       name: dart_internal
-      sha256: dae3976f383beddcfcd07ad5291a422df2c8c0a8a03c52cda63ac7b4f26e0f4e
+      sha256: "689dccc3d5f62affd339534cca548dce12b3a6b32f0f10861569d3025efc0567"
       url: "https://pub.dev"
     source: hosted
-    version: "0.2.8"
+    version: "0.2.9"
   dart_style:
     dependency: transitive
     description:
@@ -245,10 +245,10 @@ packages:
     dependency: "direct main"
     description:
       name: dio
-      sha256: "3866d67f93523161b643187af65f5ac08bc991a5bcdaf41a2d587fe4ccb49993"
+      sha256: "9d6445da1caf8412070670c03c39ad5b12a78cc8c2361417b220905a2bcbdd2f"
       url: "https://pub.dev"
     source: hosted
-    version: "5.3.0"
+    version: "5.3.1"
   easy_isolate:
     dependency: transitive
     description:
@@ -978,7 +978,7 @@ packages:
     description:
       path: "."
       ref: main
-      resolved-ref: "52a071ac21cf893c87121393ee011fc6f4cba5f9"
+      resolved-ref: e047b283bcde2c8ee26a4fa02126b2f5deac05c0
       url: "https://github.com/vheneraliuk/virtru-flutter-sdk.git"
     source: git
     version: "0.0.1"
@@ -1031,5 +1031,5 @@ packages:
     source: hosted
     version: "3.1.2"
 sdks:
-  dart: ">=3.0.5 <3.2.0"
+  dart: ">=3.0.5 <3.3.0"
   flutter: ">=3.10.0"

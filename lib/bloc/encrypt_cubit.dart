@@ -102,8 +102,8 @@ class EncryptCubit extends Cubit<EncryptState> {
       if (mimeType != null) {
         encryptParams.setMimeType(mimeType);
       }
-      final rcaLink = await client.encryptFileToRCA(encryptParams);
-      emit(state.copyWith(rcaLink: rcaLink));
+      final rcaLinkResult = await client.encryptFileToRCA(encryptParams);
+      emit(state.copyWith(rcaLink: rcaLinkResult.result));
     } on virtru.NativeError catch (error) {
       _emitError(VirtruError(name: "Native error", message: error.message));
     } catch (error) {
@@ -133,8 +133,8 @@ class EncryptCubit extends Cubit<EncryptState> {
       if (fileSize >= oneHundredMb) {
         client.setZipProtocol(true);
       }
-      final encryptedFile = await client.encryptFile(encryptParams);
-      emit(state.copyWith(encryptedFile: encryptedFile));
+      final encryptedFileResult = await client.encryptFile(encryptParams);
+      emit(state.copyWith(encryptedFile: encryptedFileResult.result));
     } on virtru.NativeError catch (error) {
       _emitError(VirtruError(name: "Native error", message: error.message));
     } catch (error) {
@@ -148,8 +148,8 @@ class EncryptCubit extends Cubit<EncryptState> {
       final sourceFileName =
           "Flutter_Demo_${DateTime.now().millisecondsSinceEpoch}.txt";
       final encryptParams = _getEncryptStringParams(message, sourceFileName);
-      final rcaLink = await client.encryptStringToRCA(encryptParams);
-      emit(state.copyWith(rcaLink: rcaLink));
+      final rcaLinkResult = await client.encryptStringToRCA(encryptParams);
+      emit(state.copyWith(rcaLink: rcaLinkResult.result));
     } on virtru.NativeError catch (error) {
       _emitError(VirtruError(name: "Native error", message: error.message));
     } catch (error) {
@@ -163,11 +163,11 @@ class EncryptCubit extends Cubit<EncryptState> {
       final sourceFileName =
           "Flutter_Demo_${DateTime.now().millisecondsSinceEpoch}.txt";
       final encryptParams = _getEncryptStringParams(message, sourceFileName);
-      final encryptedString = await client.encryptString(encryptParams);
+      final encryptedStringResult = await client.encryptString(encryptParams);
       final encryptedFileName = '$sourceFileName$tdfHtmlExt';
       final tempEncryptedFilePath = await getTempFilePath(encryptedFileName);
       final encryptedFile = XFile.fromData(
-          Uint8List.fromList(utf8.encode(encryptedString)),
+          Uint8List.fromList(utf8.encode(encryptedStringResult.result)),
           path: tempEncryptedFilePath,
           name: encryptedFileName,
           mimeType: ContentType.html.mimeType);
