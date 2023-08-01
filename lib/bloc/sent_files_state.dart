@@ -1,7 +1,7 @@
 part of 'sent_files_cubit.dart';
 
 class SentFilesState extends Equatable {
-  final List<Policy>? policies;
+  final List<ApiPolicy>? policies;
   final int? bookmark;
   final VirtruError? error;
 
@@ -13,14 +13,14 @@ class SentFilesState extends Equatable {
 
   const SentFilesState.initial() : this._(bookmark: 0);
 
-  const SentFilesState.page(List<Policy> policies, int? bookmark)
+  const SentFilesState.page(List<ApiPolicy> policies, int? bookmark)
       : this._(
           policies: policies,
           bookmark: bookmark,
         );
 
   const SentFilesState.error(
-      List<Policy>? policies, int? bookmark, dynamic error)
+      List<ApiPolicy>? policies, int? bookmark, dynamic error)
       : this._(
           policies: policies,
           bookmark: bookmark,

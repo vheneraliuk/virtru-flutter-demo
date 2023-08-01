@@ -54,7 +54,7 @@ PODS:
   - SwiftyGif (5.4.4)
   - url_launcher_ios (0.0.1):
     - Flutter
-  - virtru_sdk_flutter (0.0.1):
+  - virtru_sdk (0.0.1):
     - Flutter
 
 DEPENDENCIES:
@@ -67,7 +67,7 @@ DEPENDENCIES:
   - share_plus (from `.symlinks/plugins/share_plus/ios`)
   - shared_preferences_foundation (from `.symlinks/plugins/shared_preferences_foundation/darwin`)
   - url_launcher_ios (from `.symlinks/plugins/url_launcher_ios/ios`)
-  - virtru_sdk_flutter (from `.symlinks/plugins/virtru_sdk_flutter/ios`)
+  - virtru_sdk (from `.symlinks/plugins/virtru_sdk/ios`)
 
 SPEC REPOS:
   trunk:
@@ -95,8 +95,8 @@ EXTERNAL SOURCES:
     :path: ".symlinks/plugins/shared_preferences_foundation/darwin"
   url_launcher_ios:
     :path: ".symlinks/plugins/url_launcher_ios/ios"
-  virtru_sdk_flutter:
-    :path: ".symlinks/plugins/virtru_sdk_flutter/ios"
+  virtru_sdk:
+    :path: ".symlinks/plugins/virtru_sdk/ios"
 
 SPEC CHECKSUMS:
   app_links: 5ef33d0d295a89d9d16bb81b0e3b0d5f70d6c875
@@ -112,7 +112,7 @@ SPEC CHECKSUMS:
   shared_preferences_foundation: 5b919d13b803cadd15ed2dc053125c68730e5126
   SwiftyGif: 93a1cc87bf3a51916001cf8f3d63835fb64c819f
   url_launcher_ios: 08a3dfac5fb39e8759aeb0abbd5d9480f30fc8b4
-  virtru_sdk_flutter: 3efee0cab9312b780c28a5df4795925d3fb69d16
+  virtru_sdk: d6eb19350266906ede964ed9ac2874673a8d6ede
 
 PODFILE CHECKSUM: 70d9d25280d0dd177a5f637cdb0f0b0b12c6a189
 

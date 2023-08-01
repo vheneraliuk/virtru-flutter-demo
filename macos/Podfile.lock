@@ -14,7 +14,7 @@ PODS:
     - FlutterMacOS
   - url_launcher_macos (0.0.1):
     - FlutterMacOS
-  - virtru_sdk_flutter (0.0.1):
+  - virtru_sdk (0.0.1):
     - FlutterMacOS
 
 DEPENDENCIES:
@@ -25,7 +25,7 @@ DEPENDENCIES:
   - share_plus (from `Flutter/ephemeral/.symlinks/plugins/share_plus/macos`)
   - shared_preferences_foundation (from `Flutter/ephemeral/.symlinks/plugins/shared_preferences_foundation/darwin`)
   - url_launcher_macos (from `Flutter/ephemeral/.symlinks/plugins/url_launcher_macos/macos`)
-  - virtru_sdk_flutter (from `Flutter/ephemeral/.symlinks/plugins/virtru_sdk_flutter/macos`)
+  - virtru_sdk (from `Flutter/ephemeral/.symlinks/plugins/virtru_sdk/macos`)
 
 EXTERNAL SOURCES:
   app_links:
@@ -42,8 +42,8 @@ EXTERNAL SOURCES:
     :path: Flutter/ephemeral/.symlinks/plugins/shared_preferences_foundation/darwin
   url_launcher_macos:
     :path: Flutter/ephemeral/.symlinks/plugins/url_launcher_macos/macos
-  virtru_sdk_flutter:
-    :path: Flutter/ephemeral/.symlinks/plugins/virtru_sdk_flutter/macos
+  virtru_sdk:
+    :path: Flutter/ephemeral/.symlinks/plugins/virtru_sdk/macos
 
 SPEC CHECKSUMS:
   app_links: 4481ed4d71f384b0c3ae5016f4633aa73d32ff67
@@ -53,7 +53,7 @@ SPEC CHECKSUMS:
   share_plus: 76dd39142738f7a68dd57b05093b5e8193f220f7
   shared_preferences_foundation: 5b919d13b803cadd15ed2dc053125c68730e5126
   url_launcher_macos: d2691c7dd33ed713bf3544850a623080ec693d95
-  virtru_sdk_flutter: 459e29dce138e59c172783512410f734206e2ca9
+  virtru_sdk: e7347f4d787b0e2e93abae6dfa0b900874fa489e
 
 PODFILE CHECKSUM: 236401fc2c932af29a9fcf0e97baeeb2d750d367
 

@@ -309,7 +309,7 @@ class PoliciesSearchResponse {
 @JsonSerializable()
 class PolicyResponse {
   final String id;
-  final Policy fields;
+  final ApiPolicy fields;
 
   PolicyResponse({
     required this.id,
@@ -323,7 +323,7 @@ class PolicyResponse {
 }
 
 @JsonSerializable()
-class Policy {
+class ApiPolicy {
   final String id;
   final DateTime dateSent;
   final String? creator;
@@ -347,7 +347,7 @@ class Policy {
   final List<String> was;
   final List<String> has;
 
-  Policy(
+  ApiPolicy(
       this.id,
       this.dateSent,
       this.creator,
@@ -370,9 +370,9 @@ class Policy {
       this.was,
       this.has);
 
-  factory Policy.fromJson(Map<String, dynamic> json) => _$PolicyFromJson(json);
+  factory ApiPolicy.fromJson(Map<String, dynamic> json) => _$ApiPolicyFromJson(json);
 
-  Map<String, dynamic> toJson() => _$PolicyToJson(this);
+  Map<String, dynamic> toJson() => _$ApiPolicyToJson(this);
 }
 
 @JsonSerializable()

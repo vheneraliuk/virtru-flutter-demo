@@ -8,7 +8,7 @@ import 'package:virtru_demo_flutter/model/model.dart';
 class SentEmails extends StatelessWidget {
   const SentEmails({required this.pagingController});
 
-  final PagingController<int, Policy> pagingController;
+  final PagingController<int, ApiPolicy> pagingController;
 
   @override
   Widget build(BuildContext context) {
@@ -22,9 +22,9 @@ class SentEmails extends StatelessWidget {
       },
       child: RefreshIndicator(
         onRefresh: () => Future.sync(() => pagingController.refresh()),
-        child: PagedListView<int, Policy>(
+        child: PagedListView<int, ApiPolicy>(
           pagingController: pagingController,
-          builderDelegate: PagedChildBuilderDelegate<Policy>(
+          builderDelegate: PagedChildBuilderDelegate<ApiPolicy>(
               itemBuilder: (context, item, index) => ListTile(
                     // onTap: () => EmailPage.goHere(context, policyId: item.id),
                     leading: Icon(

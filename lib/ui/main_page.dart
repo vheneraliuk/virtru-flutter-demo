@@ -14,13 +14,13 @@ class MainPage extends StatefulWidget {
 }
 
 class _MainPageState extends State<MainPage> {
-  final PagingController<int, Policy> _sentEmailsPagingController =
+  final PagingController<int, ApiPolicy> _sentEmailsPagingController =
       PagingController(firstPageKey: 0);
-  final PagingController<int, Policy> _receivedEmailsPagingController =
+  final PagingController<int, ApiPolicy> _receivedEmailsPagingController =
       PagingController(firstPageKey: 0);
-  final PagingController<int, Policy> _sentFilesPagingController =
+  final PagingController<int, ApiPolicy> _sentFilesPagingController =
       PagingController(firstPageKey: 0);
-  final PagingController<int, Policy> _receivedFilesPagingController =
+  final PagingController<int, ApiPolicy> _receivedFilesPagingController =
       PagingController(firstPageKey: 0);
 
   static final _drawerItems = [

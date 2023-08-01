@@ -244,7 +244,7 @@ Map<String, dynamic> _$PoliciesSearchResponseToJson(
 PolicyResponse _$PolicyResponseFromJson(Map<String, dynamic> json) =>
     PolicyResponse(
       id: json['id'] as String,
-      fields: Policy.fromJson(json['fields'] as Map<String, dynamic>),
+      fields: ApiPolicy.fromJson(json['fields'] as Map<String, dynamic>),
     );
 
 Map<String, dynamic> _$PolicyResponseToJson(PolicyResponse instance) =>
@@ -253,7 +253,7 @@ Map<String, dynamic> _$PolicyResponseToJson(PolicyResponse instance) =>
       'fields': instance.fields,
     };
 
-Policy _$PolicyFromJson(Map<String, dynamic> json) => Policy(
+ApiPolicy _$ApiPolicyFromJson(Map<String, dynamic> json) => ApiPolicy(
       json['id'] as String,
       DateTime.parse(json['dateSent'] as String),
       json['creator'] as String?,
@@ -277,7 +277,7 @@ Policy _$PolicyFromJson(Map<String, dynamic> json) => Policy(
       (json['has'] as List<dynamic>).map((e) => e as String).toList(),
     );
 
-Map<String, dynamic> _$PolicyToJson(Policy instance) => <String, dynamic>{
+Map<String, dynamic> _$ApiPolicyToJson(ApiPolicy instance) => <String, dynamic>{
       'id': instance.id,
       'dateSent': instance.dateSent.toIso8601String(),
       'creator': instance.creator,

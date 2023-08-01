@@ -8,7 +8,7 @@ import 'package:virtru_demo_flutter/model/model.dart';
 class SentFiles extends StatelessWidget {
   const SentFiles({super.key, required this.pagingController});
 
-  final PagingController<int, Policy> pagingController;
+  final PagingController<int, ApiPolicy> pagingController;
 
   @override
   Widget build(BuildContext context) {
@@ -22,9 +22,9 @@ class SentFiles extends StatelessWidget {
       },
       child: RefreshIndicator(
         onRefresh: () => Future.sync(() => pagingController.refresh()),
-        child: PagedListView<int, Policy>(
+        child: PagedListView<int, ApiPolicy>(
           pagingController: pagingController,
-          builderDelegate: PagedChildBuilderDelegate<Policy>(
+          builderDelegate: PagedChildBuilderDelegate<ApiPolicy>(
               itemBuilder: (context, item, index) => ListTile(
                     leading: Icon(
                       Icons.file_present_outlined,

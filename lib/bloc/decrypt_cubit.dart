@@ -1,12 +1,11 @@
 import 'package:bloc/bloc.dart';
-import 'package:cross_file/cross_file.dart';
 import 'package:equatable/equatable.dart';
 import 'package:flutter/foundation.dart';
 import 'package:path/path.dart';
 import 'package:virtru_demo_flutter/helpers/helpers.dart';
 import 'package:virtru_demo_flutter/model/model.dart';
 import 'package:virtru_demo_flutter/repo/repo.dart';
-import 'package:virtru_sdk_flutter/virtru_sdk_flutter.dart' as virtru;
+import 'package:virtru_sdk/virtru_sdk.dart';
 
 part 'decrypt_state.dart';
 
@@ -46,7 +45,7 @@ class DecryptCubit extends Cubit<DecryptState> {
       final outputFile = XFile(outputFilePath);
       final decryptedFile = await client.decryptFile(inputFile, outputFile);
       emit(state.copyWith(decryptedFile: decryptedFile));
-    } on virtru.NativeError catch (error) {
+    } on NativeError catch (error) {
       _emitError(VirtruError(name: "Native error", message: error.message));
     } catch (error) {
       _emitError(VirtruError(
@@ -107,11 +106,11 @@ class DecryptCubit extends Cubit<DecryptState> {
     }
   }
 
-  void _decryptRcaToString(String rcaLink, virtru.Client client) async {
+  void _decryptRcaToString(String rcaLink, Client client) async {
     try {
       final result = await client.decryptRcaToString(rcaLink);
       emit(state.copyWith(decryptedString: result));
-    } on virtru.NativeError catch (error) {
+    } on NativeError catch (error) {
       _emitError(VirtruError(name: "Native error", message: error.message));
     } catch (error) {
       _emitError(VirtruError(
@@ -120,12 +119,12 @@ class DecryptCubit extends Cubit<DecryptState> {
   }
 
   void _decryptRcaToFile(
-      String rcaLink, String fileName, virtru.Client client) async {
+      String rcaLink, String fileName, Client client) async {
     try {
       final outputFile = XFile(await getTempFilePath(fileName));
       final decryptedFile = await client.decryptRcaToFile(rcaLink, outputFile);
       emit(state.copyWith(decryptedFile: decryptedFile));
-    } on virtru.NativeError catch (error) {
+    } on NativeError catch (error) {
       _emitError(VirtruError(name: "Native error", message: error.message));
     } catch (error) {
       _emitError(VirtruError(
@@ -133,7 +132,7 @@ class DecryptCubit extends Cubit<DecryptState> {
     }
   }
 
-  Future<virtru.Client?> _getClient() async {
+  Future<Client?> _getClient() async {
     final user = await _userRepo.getUser();
     if (user == null) {
       _emitError(VirtruError(
@@ -142,7 +141,7 @@ class DecryptCubit extends Cubit<DecryptState> {
       ));
       return null;
     }
-    return virtru.Client.withAppId(userId: user.userId, appId: user.appId);
+    return Client.withAppId(userId: user.userId, appId: user.appId);
   }
 
   void _emitError(VirtruError error) {

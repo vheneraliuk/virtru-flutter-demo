@@ -1,7 +1,7 @@
 part of 'sent_emails_cubit.dart';
 
 class SentEmailsState extends Equatable {
-  final List<Policy>? policies;
+  final List<ApiPolicy>? policies;
   final int? bookmark;
   final VirtruError? error;
 
@@ -13,14 +13,14 @@ class SentEmailsState extends Equatable {
 
   const SentEmailsState.initial() : this._(bookmark: 0);
 
-  const SentEmailsState.page(List<Policy> policies, int? bookmark)
+  const SentEmailsState.page(List<ApiPolicy> policies, int? bookmark)
       : this._(
           policies: policies,
           bookmark: bookmark,
         );
 
   const SentEmailsState.error(
-      List<Policy>? policies, int? bookmark, dynamic error)
+      List<ApiPolicy>? policies, int? bookmark, dynamic error)
       : this._(
           policies: policies,
           bookmark: bookmark,
