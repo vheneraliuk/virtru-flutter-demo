@@ -978,7 +978,7 @@ packages:
     description:
       path: "."
       ref: main
-      resolved-ref: "1a75ddb22d8be05f28732790d00fba34e9f90992"
+      resolved-ref: "65362eb92c86c68be38754efafface95a3c1ef8d"
       url: "https://github.com/vheneraliuk/virtru-flutter-sdk.git"
     source: git
     version: "0.0.1"
