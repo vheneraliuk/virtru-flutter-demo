@@ -371,11 +371,11 @@ class _EncryptShareWith extends StatelessWidget {
 }
 
 class _EncryptSecuritySettings extends StatelessWidget {
-  final SecuritySettings _settings;
+  final VirtruSecuritySettings _settings;
   final void Function() _showDatePicker;
 
   const _EncryptSecuritySettings(
-      {required SecuritySettings settings,
+      {required VirtruSecuritySettings settings,
       required void Function() showDatePicker})
       : _showDatePicker = showDatePicker,
         _settings = settings;

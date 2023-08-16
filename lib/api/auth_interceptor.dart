@@ -1,7 +1,7 @@
 import 'package:dio/dio.dart';
+import 'package:virtru_demo_flutter/model/model.dart';
 import 'package:virtru_demo_flutter/repo/repo.dart';
 
-import '../model/user.dart';
 
 class AuthInterceptor extends Interceptor {
   final UserRepository userRepo = UserRepository();

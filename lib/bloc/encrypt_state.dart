@@ -4,7 +4,7 @@ class EncryptState extends Equatable {
   final List<String> shareWith;
   final bool loading;
   final bool encryptToRca;
-  final SecuritySettings securitySettings;
+  final VirtruSecuritySettings securitySettings;
   final XFile? inputFile;
   final XFile? encryptedFile;
   final String? rcaLink;
@@ -24,14 +24,14 @@ class EncryptState extends Equatable {
   factory EncryptState.initial() {
     return EncryptState._(
       shareWith: List.empty(growable: true),
-      securitySettings: SecuritySettings.initial(),
+      securitySettings: VirtruSecuritySettings.initial(),
     );
   }
 
   EncryptState copyWith({
     String? newShareWith,
     String? removeShareWith,
-    SecuritySettings? securitySettings,
+    VirtruSecuritySettings? securitySettings,
     bool loading = false,
     bool? encryptToRca,
     XFile? inputFile,

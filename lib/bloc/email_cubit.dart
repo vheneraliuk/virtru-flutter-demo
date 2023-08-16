@@ -3,10 +3,9 @@ import 'dart:convert';
 import 'package:bloc/bloc.dart';
 import 'package:cryptography/cryptography.dart';
 import 'package:cryptography_flutter/cryptography_flutter.dart';
+import 'package:virtru_demo_flutter/model/model.dart';
 import 'package:virtru_demo_flutter/repo/repo.dart';
 import 'package:xml/xml.dart';
-
-import '../model/model.dart';
 
 part 'email_state.dart';
 
