@@ -112,7 +112,7 @@ SPEC CHECKSUMS:
   shared_preferences_foundation: 5b919d13b803cadd15ed2dc053125c68730e5126
   SwiftyGif: 93a1cc87bf3a51916001cf8f3d63835fb64c819f
   url_launcher_ios: 08a3dfac5fb39e8759aeb0abbd5d9480f30fc8b4
-  virtru_sdk: d6eb19350266906ede964ed9ac2874673a8d6ede
+  virtru_sdk: 6ad4e8e21899c3360bd75c7e8554c67440c3e0c5
 
 PODFILE CHECKSUM: 70d9d25280d0dd177a5f637cdb0f0b0b12c6a189
 
